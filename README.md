@@ -13,7 +13,7 @@ das auf Port 9080 lauscht, konfiguriert. Ein Deployment in einen AppServer ist n
 
 ### Setup ###
 
-* git clone https://bitbucket.org/mgoericke/wcs-wem.git
+* `git clone https://bitbucket.org/mgoericke/wcs-wem.git`
 * `mvn spring-boot:run`
 
 #### Konfiguration ####
