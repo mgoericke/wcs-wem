@@ -4,15 +4,22 @@
 package de.javamark.wcs.wem.service;
 
 import java.io.UnsupportedEncodingException;
+import java.net.URL;
+import java.net.URLDecoder;
 import java.net.URLEncoder;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import javax.ws.rs.core.MediaType;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.fatwire.rest.beans.AssetBean;
 import com.fatwire.rest.beans.AssetTypeBean;
 import com.fatwire.rest.beans.AssetsBean;
+import com.fatwire.rest.beans.Attribute;
 import com.fatwire.rest.beans.EnabledTypesBean;
 import com.fatwire.rest.beans.SitesBean;
 import com.fatwire.wem.sso.SSO;
@@ -22,6 +29,7 @@ import com.sun.jersey.api.client.WebResource;
 import com.sun.jersey.api.client.WebResource.Builder;
 
 import de.javamark.wcs.wem.WemConfig;
+import de.javamark.wcs.wem.model.Product;
 
 /**
  * @author mark
@@ -180,6 +188,127 @@ public class RESTService {
         SitesBean sitesBean = builder.get(SitesBean.class); 
         return sitesBean;
 	}
+	
+	
+	/**
+	 * return an AssetBean containing all properties of the corresponding asset
+	 * 
+	 * @param type
+	 * @param id
+	 * @return
+	 * @throws SSOException
+	 */
+	public AssetBean read(String type, String id) throws SSOException{		
+		// path
+		WebResource resource = getWebResource();		
+		resource = resource.path("sites").
+        		path(wcs.getCsSiteName()).
+        		path("types").
+        		path(type).
+        		path("assets").
+        		path(id);
+		
+		// media type
+        Builder builder = resource.accept(MediaType.APPLICATION_XML);
+        builder = builder.header("X-CSRF-Token", this.multiTicket);
+        
+        // result
+        AssetBean resultAsset = builder.get(AssetBean.class);        
+        return resultAsset;
+	}
+	
+
+	public Product getProduct(String type, String id) throws SSOException{
+		AssetBean aBean = read(type, id);
+		
+		if(aBean!=null){
+			Product asset = new Product();		
+
+			asset.setCreatedby(aBean.getCreatedby());
+			asset.setCreateddate(aBean.getUpdateddate().toString());
+			asset.setName(aBean.getName());
+			asset.setId(aBean.getId().split(":")[1]);
+
+			String titleAttrName 	= "FSIIProductName";
+			String descAttrName 	= "FSIILongDescription";
+			String imgAttrName 		= "FSIIImage";
+			String imgFileAttr 		= "FSII_ImageFile";
+			
+			
+			List<Attribute> attributes = aBean.getAttributes();
+			for(Attribute attr : attributes){
+				
+				//log.debug("attr ["+attr.getName()+"]:");
+				
+
+				if(attr.getName().equalsIgnoreCase(titleAttrName)){
+					asset.setTitle(attr.getData().getStringValue());
+				}
+				if(attr.getName().equalsIgnoreCase(descAttrName)){
+					asset.setDescription(attr.getData().getStringValue());
+				}
+				if(attr.getName().equalsIgnoreCase("updateddate")){
+					asset.setCreateddate(attr.getData().getStringValue());
+				}
+				
+
+				// image file Media_C
+				// complex blob!
+	            try {
+					if(attr.getName().equalsIgnoreCase(imgFileAttr)){
+						asset.setImageFile(attr.getData().getBlobValue().getHref());
+					}
+				} catch (Exception e) {
+					System.err.println(e);
+				}
+				
+	            
+	            // 
+				if(attr.getName().equalsIgnoreCase(imgAttrName)){
+					asset.setImage(attr.getData().getStringValue());
+					
+					// assuming it has the format:
+		            try {
+			            String[] assetId = asset.getImage().split(":");
+			            
+			            // image laden 
+			            Product img = getProduct(assetId[0], assetId[1]);
+			            
+			            // ziel: http://localhost:9080/cs/Satellite?blobcol=urldata&blobkey=id&blobtable=MungoBlobs&blobwhere=1114083738284&ssbinary=true
+			            // quelle: http://localhost:9080/cs/BlobServer?blobkey=id&amp;blobnocache=true&amp;blobwhere=1114083738284&amp;blobheadername3=MDT-Type&amp;blobheadername2=Content-Disposition&amp;blobheadername1=Content-Type&amp;blobheadervalue3=abinary%3B+charset%3DUTF-8&amp;blobheadervalue2=attachment%3B+filename%3D%22SS_HDPlasmaTV.jpg%22%3Bfilename*%3DUTF-8%27%27SS_HDPlasmaTV.jpg&amp;blobheadervalue1=image%2Fjpeg&amp;blobcol=urldata&amp;blobtable=MungoBlobs
+			            if(img.getImageFile() != null){
+			            	String imgFile = img.getImageFile().replaceAll("amp;", "");
+			            	URL url = new URL(imgFile);
+			            	Map<String, String> params = new HashMap<String, String>();
+			            	String[] queryparams = url.getQuery().split("&");
+			            	for(String qp : queryparams){        
+			            		int idx = qp.indexOf("=");
+			            		params.put(URLDecoder.decode(qp.substring(0, idx), "UTF-8"), URLDecoder.decode(qp.substring(idx + 1), "UTF-8"));
+			            	}
+			            	
+			            	String bloburl = "";
+			            	bloburl += wcs.getCsUrl();
+			            	bloburl += "/Satellite?";
+			            	bloburl += "blobcol=urldata&";
+			            	bloburl += "blobkey=id&";
+			            	bloburl += "blobtable=MungoBlobs&";
+			            	bloburl += "blobwhere=" + params.get("blobwhere") + "&";
+			            	bloburl += "ssbinary=true";
+
+				            
+							asset.setBlobUrl(bloburl);
+			            }			            			            
+					} catch (Exception e) {
+						System.err.println(e);
+					}
+				}
+			}
+			return asset;
+		}		
+		return null;
+	}
+	
+	
 	
 	
 	private WebResource getWebResource() throws SSOException{

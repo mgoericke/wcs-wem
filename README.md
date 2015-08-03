@@ -5,6 +5,24 @@
 Die Applikation basiert auf Spring Boot v1.1.6 (annotation based) und enthält einen eingebetteten Tomcat Container (localhost:8081). Per default ist die Applikation für ein Jump Start Kit, 
 das auf Port 9080 lauscht, konfiguriert. Ein Deployment in einen AppServer ist nicht nötig!
 
+### Features ###
+
+* Spring Boot Applikation
+	* Installation / Start ohne AppServer
+	* Annotation based Spring Configuration
+* Install UI
+	* Installation einer WEM Applikation
+	* Installation von 2 AssetTypes in WCS
+* Admin UI
+	* Kommentare nach Status ein/ausblenden
+	* Status von Kommentaren ändern
+* App UI
+	* Anzeige von Produkten
+	* Anzeige von Kommentaren zu PRodukten
+	* Erstellen neuer Kommentare
+	* Suche in Produkten
+
+
 
 ### Version ###
 

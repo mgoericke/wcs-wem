@@ -18,4 +18,6 @@ public class Mapper {
 		ObjectMapper mapper = new ObjectMapper();		
 		return mapper.writeValueAsString(value);
 	}
+	
+	
 }
