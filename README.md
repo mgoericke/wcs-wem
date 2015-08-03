@@ -3,17 +3,18 @@
 ## WEM Application Prototype / Template ##
 
 Die Applikation basiert auf Spring Boot v1.1.6 (annotation based) und enthält einen eingebetteten Tomcat Container (localhost:8081). Per default ist die Applikation für ein Jump Start Kit, 
-das auf Port 9080 lauscht, konfiguriert. 
-
-`mvn spring-boot:run` startet die App - ein Deployment in einen AppServer ist nicht nötig!
+das auf Port 9080 lauscht, konfiguriert. Ein Deployment in einen AppServer ist nicht nötig!
 
 
+### Version ###
 
 * v0.0.1
+
 
 ### Setup ###
 
 * git clone https://bitbucket.org/mgoericke/wcs-wem.git
+* `mvn spring-boot:run`
 
 #### Konfiguration ####
 
