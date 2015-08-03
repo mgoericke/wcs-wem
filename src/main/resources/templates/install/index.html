@@ -1,0 +1,102 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+    <title>WEM Install UI</title>
+
+    <!-- Bootstrap -->
+    <link href="/css/bootstrap.min.css" rel="stylesheet" />
+
+    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->
+    
+    <style type="text/css">
+    	body {
+		  min-height: 2000px;
+		  padding-top: 70px;
+		}
+    </style>
+    
+  </head>
+<body>
+	
+	    <!-- Fixed navbar -->
+    <nav class="navbar navbar-default navbar-fixed-top">
+      <div class="container">
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand" href="#">WEM Install UI</a>
+        </div>
+      </div>
+    </nav>
+	
+	
+	
+	<div class="container">
+		<div class="row">
+			<div class="alert alert-success" th:text="${msg}"></div>
+			<table class="table table-striped">
+			<tbody>
+			<tr>
+				<td>id</td>
+				<td th:text="${wemapp.id}"></td>
+			</tr>
+			<tr>
+				<td>description</td>
+				<td th:text="${wemapp.description}"></td>
+			</tr>
+			<tr>
+				<td>href</td>
+				<td th:text="${wemapp.href}"></td>
+			</tr>
+			<tr>
+				<td>iconurl</td>
+				<td th:text="${wemapp.iconurl}"></td>
+			</tr>
+			<tr>
+				<td>iconurlactive</td>
+				<td th:text="${wemapp.iconurlactive}"></td>
+			</tr>
+			<tr>
+				<td>iconurlhover</td>
+				<td th:text="${wemapp.iconurlhover}"></td>
+			</tr>
+			<tr>
+				<td>layouttype</td>
+				<td th:text="${wemapp.layouttype}"></td>
+			</tr>
+			<tr>
+				<td>parentid</td>
+				<td th:text="${wemapp.parentid}"></td>
+			</tr>
+			<tr>
+				<td>shortdescription</td>
+				<td th:text="${wemapp.shortdescription}"></td>
+			</tr>
+			<tr>
+				<td>tooltip</td>
+				<td th:text="${wemapp.tooltip}"></td>
+			</tr>
+			</tbody>
+			</table>
+		</div>
+	</div>
+    
+    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+    <!-- Include all compiled plugins (below), or include individual files as needed -->
+    <script src="/js/bootstrap.min.js"></script>
+</body>
+</html>

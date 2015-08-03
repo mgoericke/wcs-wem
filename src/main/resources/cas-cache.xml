@@ -1,0 +1,112 @@
+<ehcache>
+    <diskStore path="java.io.tmpdir/cascache" />
+
+    <defaultCache
+            maxElementsInMemory="100"
+            eternal="false"
+            timeToIdleSeconds="120"
+            timeToLiveSeconds="120"
+            overflowToDisk="true"
+            maxElementsOnDisk="10000000"
+            diskPersistent="false"
+            diskExpiryThreadIntervalSeconds="120"
+            memoryStoreEvictionPolicy="LRU"
+            />
+
+    <cacheManagerPeerListenerFactory
+            class="net.sf.ehcache.distribution.RMICacheManagerPeerListenerFactory"
+            properties="" />
+
+    <cacheManagerPeerProviderFactory
+            class="net.sf.ehcache.distribution.RMICacheManagerPeerProviderFactory"
+            properties="peerDiscovery=automatic, multicastGroupAddress=230.0.0.0,
+                                multicastGroupPort=4666, timeToLive=0" />
+
+    <cache name="ticketcache"
+           diskPersistent="false"
+           maxElementsInMemory="1000000"
+           maxElementsOnDisk="10000000" 
+           eternal="true"
+           overflowToDisk="true"
+           diskSpoolBufferSizeMB="20"
+           memoryStoreEvictionPolicy="LFU"
+           clearOnFlush="false">
+		   <cacheEventListenerFactory class="net.sf.ehcache.distribution.RMICacheReplicatorFactory"
+									  properties="replicateAsynchronously=false, 
+												  replicatePuts=true, 
+												  replicateUpdates=true, 
+												  replicateUpdatesViaCopy=true, 
+												  replicateRemovals=true " 
+									  propertySeparator="," />
+			<bootstrapCacheLoaderFactory class="net.sf.ehcache.distribution.RMIBootstrapCacheLoaderFactory"
+										 properties="bootstrapAsynchronously=false, 
+													 maximumChunkSizeBytes=5000000" 
+										 propertySeparator="," />
+    </cache>
+	
+	<cache name="sessioncache"
+           diskPersistent="false"
+           maxElementsInMemory="1000000"
+           maxElementsOnDisk="1000000" 
+           eternal="true"
+           overflowToDisk="true"
+           diskSpoolBufferSizeMB="20"
+           memoryStoreEvictionPolicy="LFU"
+           clearOnFlush="false">
+		   <cacheEventListenerFactory class="net.sf.ehcache.distribution.RMICacheReplicatorFactory"
+									  properties="replicateAsynchronously=false, 
+												  replicatePuts=true, 
+												  replicateUpdates=true, 
+												  replicateUpdatesViaCopy=true, 
+												  replicateRemovals=true " 
+									  propertySeparator="," />
+			<bootstrapCacheLoaderFactory class="net.sf.ehcache.distribution.RMIBootstrapCacheLoaderFactory"
+										 properties="bootstrapAsynchronously=false, 
+													 maximumChunkSizeBytes=5000000" 
+										 propertySeparator="," />
+    </cache>
+
+    <cache name="dependencyRepository"
+           diskPersistent="true"
+           maxElementsInMemory="1000000"
+           maxElementsOnDisk="1000000"
+           eternal="true"
+           overflowToDisk="true"
+           diskSpoolBufferSizeMB="20"
+           memoryStoreEvictionPolicy="LFU"
+           clearOnFlush="false">
+		   <cacheEventListenerFactory class="net.sf.ehcache.distribution.RMICacheReplicatorFactory"
+									  properties="replicateAsynchronously=false, 
+												  replicatePuts=true, 
+												  replicateUpdates=true, 
+												  replicateUpdatesViaCopy=true, 
+												  replicateRemovals=true " 
+									  propertySeparator="," />
+			<bootstrapCacheLoaderFactory class="net.sf.ehcache.distribution.RMIBootstrapCacheLoaderFactory"
+										 properties="bootstrapAsynchronously=false, 
+													 maximumChunkSizeBytes=5000000" 
+										 propertySeparator="," />
+    </cache>
+
+
+    <cache name="notifier"
+           diskPersistent="true"
+           maxElementsInMemory="500"
+           maxElementsOnDisk="500"
+           eternal="true"
+           overflowToDisk="true"
+           diskSpoolBufferSizeMB="20"
+           memoryStoreEvictionPolicy="LRU"
+           clearOnFlush="false">
+        <cacheEventListenerFactory class="com.fatwire.cache.ehcache.CSCacheEventListenerFactory"/>
+        <cacheEventListenerFactory class="net.sf.ehcache.distribution.RMICacheReplicatorFactory"
+                                   properties="replicateAsynchronously=false,
+                                                 replicatePuts=true,
+                                                 replicateUpdates=true,
+                                                 replicateUpdatesViaCopy=true,
+                                                 replicateRemovals=true"
+                                   propertySeparator="," />
+    </cache>
+</ehcache>
+
+
