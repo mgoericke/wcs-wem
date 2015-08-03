@@ -1,7 +1,6 @@
 package de.javamark.wcs.wem.controller;
 
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 
 import org.codehaus.jackson.JsonGenerationException;
 import org.codehaus.jackson.map.JsonMappingException;
@@ -12,9 +11,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.fatwire.rest.beans.AssetsBean;
-import com.fatwire.rest.beans.EnabledTypesBean;
-import com.fatwire.rest.beans.SitesBean;
 import com.fatwire.wem.sso.SSOException;
 
 import de.javamark.wcs.wem.service.RESTService;

@@ -57,9 +57,10 @@ Installation: [http://localhost:8081/install](http://localhost:8081/install)
 Es werden folgende Basic Asset Type(s) installiert:
 
 * FW_Comment
-	* Kommentare zu einem Asset (WCS)
-	* Blog
-	* Es werden 1-2 Kommentare zu Produkten hinzugefügt. Die Kommentare habe verschiedene Freigabe Status (WAIT, APPROVED) - kann in Admin bearbeitet werden
+	* Kommentare zu einem Asset (FW_Comment)
+		* Es werden 1-2 Kommentare zu Produkten hinzugefügt. Die Kommentare habe verschiedene Freigabe Status (WAIT, APPROVED) - kann in Admin bearbeitet werden
+	* BlogPost (FW_BlogPost)
+		* initial gibt es nur einen Blog mit n-BlogPosts. 
  
 Nach Installation und Aktivierung erscheint im WEM Header in WebCenter Sites (FirstSiteII) ein Logo. Klickt man darauf, kommt man ins Admin UI.
 
