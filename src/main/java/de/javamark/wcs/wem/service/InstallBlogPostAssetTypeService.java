@@ -24,7 +24,9 @@ import com.fatwire.rest.beans.IndexFieldTypeEnum;
 import com.fatwire.rest.beans.IndexStatus;
 import com.fatwire.rest.beans.IndexStatusEnum;
 import com.fatwire.rest.beans.SiteBean;
+import com.fatwire.rest.beans.Struct;
 import com.fatwire.wem.sso.SSO;
+import com.fatwire.wem.sso.SSOException;
 import com.sun.jersey.api.client.Client;
 import com.sun.jersey.api.client.UniformInterfaceException;
 import com.sun.jersey.api.client.WebResource;
@@ -33,12 +35,12 @@ import com.sun.jersey.api.client.WebResource.Builder;
 import de.javamark.wcs.wem.WemConfig;
 
 @Service
-public class InstallCommentAssetTypeService {
+public class InstallBlogPostAssetTypeService {
 	
 	
 	
-	private String assetTypeName		= "FW_Comment";
-	private String assetTypeDescription = "Asset Comments";
+	private String assetTypeName		= "FW_BlogPost";
+	private String assetTypeDescription = "Blog Posts";
 	
 	@Autowired
 	WemConfig config;
@@ -49,22 +51,37 @@ public class InstallCommentAssetTypeService {
 		REJECTED
 	}
 	
+	
+	private Builder getBuilder(String uri) throws SSOException{
+        // Create Jersey client.
+        Client client = Client.create();
+        String url = config.getRestUrl() + uri;
+        WebResource res = client.resource(url);
+        String ticket = SSO.getSSOSession().getTicket(url, config.getCsUsername(), config.getCsPassword());
+        res = res.queryParam("ticket", ticket);
+        Builder bld = res.accept(MediaType.APPLICATION_XML);     
+        bld = bld.header("Pragma", "auth-redirect=false");
+        //Add the CSRF header
+        bld = bld.header("X-CSRF-Token", ticket);
+        
+        return bld;
+	}
 
 	/* (non-Javadoc)
 	 * @see de.javamark.wem.service.FWAssetTypeService#checkType()
 	 */
     public AssetTypeBean getAssetType() throws Exception{
-        // Create Jersey client.
-        Client client = Client.create();
-        String url = config.getRestUrl() + "/types/" + assetTypeName;
-        WebResource res = client.resource(url);
-        res = res.queryParam("ticket", SSO.getSSOSession().getTicket(url, config.getCsUsername(), config.getCsPassword()));
-        Builder bld = res.accept(MediaType.APPLICATION_XML);
-        bld = bld.header("Pragma", "auth-redirect=false");
-        
+//        // Create Jersey client.
+//        Client client = Client.create();
+//        String url = config.getRestUrl() + "/types/" + assetTypeName;
+//        WebResource res = client.resource(url);
+//        res = res.queryParam("ticket", SSO.getSSOSession().getTicket(url, config.getCsUsername(), config.getCsPassword()));
+//        Builder bld = res.accept(MediaType.APPLICATION_XML);
+//        bld = bld.header("Pragma", "auth-redirect=false");
+//        
         try{
             // Test type for existence.            
-            return bld.get(AssetTypeBean.class);
+            return getBuilder("/types/" + assetTypeName).get(AssetTypeBean.class);
         }
         catch (UniformInterfaceException ex)
         {
@@ -76,38 +93,29 @@ public class InstallCommentAssetTypeService {
 	 * @see de.javamark.wem.service.FWAssetTypeService#createType()
 	 */
     public AssetTypeBean createAssetType() throws Exception{
-        // Create Jersey client.
-        Client client = Client.create();
-        String url = config.getRestUrl() + "/types/" + assetTypeName;
-        WebResource res = client.resource(url);
-        String ticket = SSO.getSSOSession().getTicket(url, config.getCsUsername(), config.getCsPassword());
-        res = res.queryParam("ticket", ticket);
-        Builder bld = res.accept(MediaType.APPLICATION_XML);     
-        bld = bld.header("Pragma", "auth-redirect=false");
-        //Add the CSRF header
-        bld = bld.header("X-CSRF-Token", ticket);
+//        // Create Jersey client.
+//        Client client = Client.create();
+//        String url = config.getRestUrl() + "/types/" + assetTypeName;
+//        WebResource res = client.resource(url);
+//        String ticket = SSO.getSSOSession().getTicket(url, config.getCsUsername(), config.getCsPassword());
+//        res = res.queryParam("ticket", ticket);
+//        Builder bld = res.accept(MediaType.APPLICATION_XML);     
+//        bld = bld.header("Pragma", "auth-redirect=false");
+//        //Add the CSRF header
+//        bld = bld.header("X-CSRF-Token", ticket);
 
+    	
         // Create asset type object.
         AssetTypeBean type = new AssetTypeBean();
         type.setName(assetTypeName);
         type.setDescription(assetTypeDescription);
         type.setCanBeChild(false);
         
+        // attributes
         List<AttributeDefBean> attrs = new ArrayList<AttributeDefBean>();        
 
-
-
-        // Populate rating attribute definition.
-        AttributeDefBean rating_attr = new AttributeDefBean();
-        rating_attr.setName("rating");
-        rating_attr.setType(AttributeTypeEnum.STRING);
-        rating_attr.setDescription("Rating 1-5");
-        rating_attr.setIsDataMandatory(false);
-        rating_attr.setIsMetaData(false);
-        rating_attr.setDataLength(4);
-        attrs.add(rating_attr);
         
-        // Populate cat attribute definition.
+        // Populate state attribute definition.
         AttributeDefBean state_attr = new AttributeDefBean();
         state_attr.setName("state");
         state_attr.setType(AttributeTypeEnum.STRING);
@@ -117,25 +125,6 @@ public class InstallCommentAssetTypeService {
         state_attr.setDataLength(256);
         attrs.add(state_attr);
 
-        // Populate cat attribute definition.
-        AttributeDefBean reltype_attr = new AttributeDefBean();
-        reltype_attr.setName("reltype");
-        reltype_attr.setType(AttributeTypeEnum.STRING);
-        reltype_attr.setDescription("Related Asset Type");
-        reltype_attr.setIsDataMandatory(true);
-        reltype_attr.setIsMetaData(false);
-        reltype_attr.setDataLength(256);
-        attrs.add(reltype_attr);
-
-        // Populate cat attribute definition.
-        AttributeDefBean article_attr = new AttributeDefBean();
-        article_attr.setName("relid");
-        article_attr.setType(AttributeTypeEnum.STRING);
-        article_attr.setDescription("Related Asset Id");
-        article_attr.setIsDataMandatory(true);
-        article_attr.setIsMetaData(false);
-        article_attr.setDataLength(256);
-        attrs.add(article_attr);
         
         // Populate cat attribute definition.
         AttributeDefBean cat_attr = new AttributeDefBean();
@@ -151,29 +140,40 @@ public class InstallCommentAssetTypeService {
         AttributeDefBean source_attr = new AttributeDefBean();
         source_attr.setName("source");
         source_attr.setType(AttributeTypeEnum.STRING);
-        source_attr.setDescription("Comment Source");
+        source_attr.setDescription("Source");
         source_attr.setIsDataMandatory(true);
         source_attr.setIsMetaData(false);
         source_attr.setDataLength(256);
         attrs.add(source_attr);
         
         
-        // Populate content attribute definition.
+        // Populate title attribute definition.
         AttributeDefBean title_attr = new AttributeDefBean();
         title_attr.setName("title");
         title_attr.setType(AttributeTypeEnum.LARGE_TEXT);
-        title_attr.setDescription("Comment Title");
+        title_attr.setDescription("Title");
         title_attr.setIsDataMandatory(true);
         title_attr.setIsMetaData(false);
         title_attr.setDataLength(2000);
         attrs.add(title_attr);
 
         
+        // Populate tags attribute definition.
+        AttributeDefBean tags_attr = new AttributeDefBean();
+        tags_attr.setName("tags");
+        tags_attr.setType(AttributeTypeEnum.ARRAY);
+        tags_attr.setDescription("Tags");
+        tags_attr.setIsDataMandatory(true);
+        tags_attr.setIsMetaData(false);
+        tags_attr.setDataLength(2000);
+        attrs.add(tags_attr);
+
+        
         // Populate content attribute definition.
         AttributeDefBean content_attr = new AttributeDefBean();
         content_attr.setName("content");
         content_attr.setType(AttributeTypeEnum.LARGE_TEXT);
-        content_attr.setDescription("Comment Content");
+        content_attr.setDescription("Blog Content");
         content_attr.setIsDataMandatory(true);
         content_attr.setIsMetaData(false);
         content_attr.setDataLength(2000);
@@ -181,22 +181,26 @@ public class InstallCommentAssetTypeService {
         
         type.getAttributes().addAll(attrs);
 
-        return bld.put(AssetTypeBean.class, type);
+        return getBuilder("/types/" + assetTypeName).put(AssetTypeBean.class, type);
     }
     
     public IndexConfigBean indexAssetType() throws Exception
     {
         // Create Jersey client.
-        Client client = Client.create();
-        String url = config.getRestUrl() + "/indexes/" + assetTypeName;
-        WebResource res = client.resource(url);
-        String ticket = SSO.getSSOSession().getTicket(url, config.getCsUsername(), config.getCsPassword());
-        res = res.queryParam("ticket", SSO.getSSOSession().getTicket(url, config.getCsUsername(), config.getCsPassword()));
-        Builder bld = res.accept(MediaType.APPLICATION_XML);
-        bld = bld.header("Content-Type", MediaType.APPLICATION_XML);
-        bld = bld.header("Pragma", "auth-redirect=false");
-        //Add the CSRF header
-        bld = bld.header("X-CSRF-Token", ticket);
+//        Client client = Client.create();
+//        String url = config.getRestUrl() + "/indexes/" + assetTypeName;
+//        WebResource res = client.resource(url);
+//        String ticket = SSO.getSSOSession().getTicket(url, config.getCsUsername(), config.getCsPassword());
+//        res = res.queryParam("ticket", SSO.getSSOSession().getTicket(url, config.getCsUsername(), config.getCsPassword()));
+//        Builder bld = res.accept(MediaType.APPLICATION_XML);
+//        bld = bld.header("Content-Type", MediaType.APPLICATION_XML);
+//        bld = bld.header("Pragma", "auth-redirect=false");
+//        //Add the CSRF header
+//        bld = bld.header("X-CSRF-Token", ticket);
+        
+        
+        
+        
         
         // Create index configuration bean.
         IndexConfigBean config = new IndexConfigBean();
@@ -216,16 +220,6 @@ public class InstallCommentAssetTypeService {
         nameDescr.setBoost(120);
         config.getFieldDescriptors().add(nameDescr);
         
-
-        // Create field description for 'name' field.
-        IndexFieldDescriptor ratingDescr = new IndexFieldDescriptor();
-        ratingDescr.setName("rating");
-        ratingDescr.setType(IndexFieldTypeEnum.NUMERIC);
-        ratingDescr.setTokenized(true);
-        ratingDescr.setStored(true);
-        ratingDescr.setBoost(120);
-        config.getFieldDescriptors().add(ratingDescr);
-        
         // Create field description for 'title' field.
         IndexFieldDescriptor titleDescr = new IndexFieldDescriptor();
         titleDescr.setName("title");
@@ -235,15 +229,6 @@ public class InstallCommentAssetTypeService {
         titleDescr.setBoost(100);
         config.getFieldDescriptors().add(titleDescr);
         
-        // Create field description for 'name' field.
-        IndexFieldDescriptor descrDescr = new IndexFieldDescriptor();
-        descrDescr.setName("description");
-        descrDescr.setType(IndexFieldTypeEnum.LARGE_TEXT);
-        descrDescr.setTokenized(true);
-        descrDescr.setStored(true);
-        descrDescr.setBoost(100);
-        config.getFieldDescriptors().add(descrDescr);
-        
         // Create field description for 'state' field.
         IndexFieldDescriptor stateDescr = new IndexFieldDescriptor();
         stateDescr.setName("state");
@@ -252,24 +237,7 @@ public class InstallCommentAssetTypeService {
         stateDescr.setStored(true);
         stateDescr.setBoost(100);
         config.getFieldDescriptors().add(stateDescr);
-        
-        // Create field description for 'relid' field.
-        IndexFieldDescriptor reltypeDescr = new IndexFieldDescriptor();
-        reltypeDescr.setName("reltype");
-        reltypeDescr.setType(IndexFieldTypeEnum.TEXT);
-        reltypeDescr.setTokenized(true);
-        reltypeDescr.setStored(true);
-        reltypeDescr.setBoost(100);
-        config.getFieldDescriptors().add(reltypeDescr);
-        
-        // Create field description for 'relid' field.
-        IndexFieldDescriptor relidDescr = new IndexFieldDescriptor();
-        relidDescr.setName("relid");
-        relidDescr.setType(IndexFieldTypeEnum.TEXT);
-        relidDescr.setTokenized(true);
-        relidDescr.setStored(true);
-        relidDescr.setBoost(100);
-        config.getFieldDescriptors().add(relidDescr);
+
         
         // Create field description for 'cat' field.
         IndexFieldDescriptor catDescr = new IndexFieldDescriptor();
@@ -289,6 +257,15 @@ public class InstallCommentAssetTypeService {
         sourceDescr.setBoost(100);
         config.getFieldDescriptors().add(sourceDescr);
         
+        // Create field description for 'tags' field.
+        IndexFieldDescriptor tagsDescr = new IndexFieldDescriptor();
+        tagsDescr.setName("tags");
+        tagsDescr.setType(IndexFieldTypeEnum.LARGE_TEXT);
+        tagsDescr.setTokenized(true);
+        tagsDescr.setStored(true);
+        tagsDescr.setBoost(100);
+        config.getFieldDescriptors().add(tagsDescr);
+        
         // Create field description for 'content' field.
         IndexFieldDescriptor contentDescr = new IndexFieldDescriptor();
         contentDescr.setName("content");
@@ -306,7 +283,7 @@ public class InstallCommentAssetTypeService {
         config.getStatusObjects().add(status);
         
         // Create index configuration.
-        return bld.put(IndexConfigBean.class, config);
+        return getBuilder("/indexes/" + assetTypeName).put(IndexConfigBean.class, config);
     }
     public SiteBean enableAssetType() throws Exception
     {
@@ -347,35 +324,27 @@ public class InstallCommentAssetTypeService {
     		String title,
     		String filename,
     		String content,
-    		String relid,
-    		String reltype,
     		STATE state,
-    		String rating) throws Exception
+    		List<String> tags) throws Exception
     {
 
     	
-        Client client = Client.create();
-        String url = config.getRestUrl() + "/sites/" + config.getCsSiteName() + "/types/"+assetTypeName+"/assets/0";
-        WebResource res = client.resource(url);
-        String ticket = SSO.getSSOSession().getTicket(url, config.getCsUsername(), config.getCsPassword());
-        res = res.queryParam("ticket", SSO.getSSOSession().getTicket(url, config.getCsUsername(), config.getCsPassword()));
-        Builder bld = res.accept(MediaType.APPLICATION_XML);
-        bld = bld.header("Pragma", "auth-redirect=false");
-        //Add the CSRF header
-        bld = bld.header("X-CSRF-Token", ticket);
+//        Client client = Client.create();
+//        String url = config.getRestUrl() + "/sites/" + config.getCsSiteName() + "/types/"+assetTypeName+"/assets/0";
+//        WebResource res = client.resource(url);
+//        String ticket = SSO.getSSOSession().getTicket(url, config.getCsUsername(), config.getCsPassword());
+//        res = res.queryParam("ticket", SSO.getSSOSession().getTicket(url, config.getCsUsername(), config.getCsPassword()));
+//        Builder bld = res.accept(MediaType.APPLICATION_XML);
+//        bld = bld.header("Pragma", "auth-redirect=false");
+//        //Add the CSRF header
+//        bld = bld.header("X-CSRF-Token", ticket);
         
                 
+    	// Name
         AssetBean asset = new AssetBean();
         asset.setId(this.assetTypeName + ":0");
         asset.setName(name);
         asset.setDescription(desc);
-
-        Attribute rating_attr = new Attribute();
-        Data rating_data = new Data();
-        rating_data.setStringValue(rating);
-        rating_attr.setData(rating_data);
-        rating_attr.setName("rating");
-        asset.getAttributes().add(rating_attr);
 
         Attribute state_attr = new Attribute();
         Data state_data = new Data();
@@ -384,26 +353,26 @@ public class InstallCommentAssetTypeService {
         state_attr.setName("state");
         asset.getAttributes().add(state_attr);
 
-        Attribute reltype_attr = new Attribute();
-        Data reltype_data = new Data();
-        reltype_data.setStringValue(reltype);
-        reltype_attr.setData(reltype_data);
-        reltype_attr.setName("reltype");
-        asset.getAttributes().add(reltype_attr);
-
-        Attribute relid_attr = new Attribute();
-        Data relid_data = new Data();
-        relid_data.setStringValue(relid);
-        relid_attr.setData(relid_data);
-        relid_attr.setName("relid");
-        asset.getAttributes().add(relid_attr);
-
-        Attribute title_attr = new Attribute();
-        Data title_data = new Data();
-        title_data.setStringValue(title);
-        title_attr.setData(title_data);
-        title_attr.setName("title");
-        asset.getAttributes().add(title_attr);
+        
+        com.fatwire.rest.beans.List list = new com.fatwire.rest.beans.List();
+        List<Struct> items = list.getItems();
+        for(String tag : tags){
+        	
+        	
+        	Attribute tagAttr = new Attribute();
+        	Data tagData = new Data();
+        	tagData.setStringValue(tag);
+        	Struct s = new Struct();
+        	s.getItems().add(tagAttr);
+        	list.getItems().add(s);
+        }
+        
+        Attribute tags_attr = new Attribute();
+        Data tags_data = new Data();
+        tags_data.setListValue(list);
+        tags_attr.setData(tags_data);
+        tags_attr.setName("tags");
+        asset.getAttributes().add(tags_attr);
 
         Attribute cat_attr = new Attribute();
         Data cat_data = new Data();
@@ -421,8 +390,9 @@ public class InstallCommentAssetTypeService {
 
         
         // read content from file ... DEMO CONTENT
+        // otherwise use the content parameter
         if(filename != null){
-            ClassLoader cl = InstallCommentAssetTypeService.class.getClassLoader();
+            ClassLoader cl = InstallBlogPostAssetTypeService.class.getClassLoader();
             Reader txt = new InputStreamReader(cl.getResourceAsStream("install/" + filename + ".txt"), "UTF-8");
             int numread = 0;
             char[] cbuff = new char[1024];
@@ -444,7 +414,7 @@ public class InstallCommentAssetTypeService {
 
         asset.getPublists().addAll(Collections.singletonList(config.getCsSiteName()));
 
-        return bld.put(AssetBean.class, asset);
+        return getBuilder("/sites/" + config.getCsSiteName() + "/types/"+assetTypeName+"/assets/0").put(AssetBean.class, asset);
     }
     
 }

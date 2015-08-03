@@ -6,8 +6,11 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.fatwire.rest.beans.Application;
+import com.fatwire.rest.beans.AssetTypeBean;
 
 import de.javamark.wcs.wem.WemConfig;
+import de.javamark.wcs.wem.service.InstallBlogPostAssetTypeService;
+import de.javamark.wcs.wem.service.InstallCommentAssetTypeService;
 import de.javamark.wcs.wem.service.InstallService;
 import de.javamark.wcs.wem.service.RESTService;
 
@@ -22,6 +25,12 @@ public class BaseController {
 	
 	@Autowired 
 	InstallService installService;
+
+	@Autowired 
+	InstallCommentAssetTypeService installCommentAssetTypeService;
+
+	@Autowired 
+	InstallBlogPostAssetTypeService installBlogPostAssetTypeService;
 	
 	
 	/**
@@ -50,6 +59,8 @@ public class BaseController {
 		Application wemapp = installService.getApplication();
 		
 		if(wemapp == null){
+			
+			wemapp = installService.createApplication();
 			model.addAttribute("msg", "wem application created");
 			wemapp = installService.createApplication();
 		}else{
@@ -58,7 +69,19 @@ public class BaseController {
 		model.addAttribute("wemapp", wemapp);
 
 
+		AssetTypeBean commentType = installCommentAssetTypeService.getAssetType();
+		if(commentType == null){
+			model.addAttribute("commentTypeMsg", "comment assettype created");			
+		}else{
+			model.addAttribute("commentTypeMsg", "comment assettype already installed");
+		}
 		
+		AssetTypeBean blobPostType = installBlogPostAssetTypeService.getAssetType();
+		if(blobPostType == null){
+			model.addAttribute("blogPostTypeMsg", "blog post assettype created");			
+		}else{
+			model.addAttribute("blogPostTypeMsg", "blog post assettype already installed");
+		}
 		
 		return "install/index";
 	}
