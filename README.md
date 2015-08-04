@@ -81,10 +81,8 @@ Hostnames und Ports sind abhängig vom App Server, auf dem die WEM Applikation bz
 		* `csUrl = http://localhost:9080/cs` (JSK oder WCS installation)
 		* `contextPathUrl = http://localhost:8081` (WEM application installation)
 
-> EhCache mag keine IPv6 Adressen :( - Sollte ein Fehler `EhCache: cannot assign requested address` im log des App Server erscheinen, dann folgendes Argument an Java übergeben:
-`-Djava.net.preferIPv4Stack=true`
 
-* In WCS muss für die AssetTypen Product_C und Content_C der Suchindex aktiviert werden, bevor die Installation beginnt!
+* In WCS MUSS für die AssetTypen Product_C und Content_C der Suchindex aktiviert werden, bevor die Installation beginnt!
 
 #### Build und Installation ####
 Ins Verzeichnis wechseln, in dem das Repository geladen wurde und `mvn spring-boot:run` ausführen. Spring Boot startet einen Container, der auf den Port lauscht, der in `/src/main/resources/application.properties` als `server-port` angegeben wurde.
