@@ -73,21 +73,21 @@ public class PubController {
 		
 		return "app/index";
 	}
-
-	@RequestMapping(value="/comments/product/{productid}")
-	public String comments(@PathVariable(value="productid") String productid, Model model){
-		
-		// lade kommentare und übergib diese an das Comment Template
-		log.debug("lade comments für :" + productid);
-		try {
-			List<Comment> commentsList = restService.getComments(productid);
-			model.addAttribute("comments", commentsList);
-		} catch (UnsupportedEncodingException e) {
-			model.addAttribute("error", e);
-		} catch (SSOException e) {
-			model.addAttribute("error", e);
-		}
-		
-		return "comments/template";
-	}
+//
+//	@RequestMapping(value="/comments/product/{productid}")
+//	public String comments(@PathVariable(value="productid") String productid, Model model){
+//		
+//		// lade kommentare und übergib diese an das Comment Template
+//		log.debug("lade comments für :" + productid);
+//		try {
+//			List<Comment> commentsList = restService.getComments(productid);
+//			model.addAttribute("comments", commentsList);
+//		} catch (UnsupportedEncodingException e) {
+//			model.addAttribute("error", e);
+//		} catch (SSOException e) {
+//			model.addAttribute("error", e);
+//		}
+//		
+//		return "comments/template";
+//	}
 }

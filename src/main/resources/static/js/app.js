@@ -73,6 +73,8 @@ $(document).ready(function(){
                     	markup += '</div>';
                     	markup += '</li>';
                     	$('#ul' + relid).append(markup);
+                    	
+                    	location.href.reload();
 
                     },
                     error:function(){

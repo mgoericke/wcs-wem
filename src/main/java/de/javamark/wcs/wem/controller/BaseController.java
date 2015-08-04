@@ -9,9 +9,12 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.fatwire.rest.beans.Application;
+import com.fatwire.rest.beans.AssetBean;
 import com.fatwire.rest.beans.AssetTypeBean;
+import com.fatwire.rest.beans.Attribute;
 import com.fatwire.wem.sso.SSOException;
 
 import de.javamark.wcs.wem.WemConfig;
@@ -20,6 +23,7 @@ import de.javamark.wcs.wem.model.Comment;
 import de.javamark.wcs.wem.service.InstallApplicationService;
 import de.javamark.wcs.wem.service.InstallBlogPostAssetTypeService;
 import de.javamark.wcs.wem.service.InstallCommentAssetTypeService;
+import de.javamark.wcs.wem.service.InstallCommentAssetTypeService.STATE;
 import de.javamark.wcs.wem.service.RESTService;
 
 @Controller
@@ -79,7 +83,7 @@ public class BaseController {
 				
 				model.addAttribute("comments", comments);
 			}else{
-				System.out.println("hmmm ... no comments found");
+				log.debug("hmmm ... no comments found");
 			}
 		} catch (UnsupportedEncodingException e) {
 			model.addAttribute("error", e);
@@ -112,7 +116,7 @@ public class BaseController {
 				
 				model.addAttribute("blogposts", blogposts);
 			}else{
-				System.out.println("hmmm ... no blogposts found");
+				log.debug("hmmm ... no blogposts found");
 			}
 		} catch (UnsupportedEncodingException e) {
 			model.addAttribute("error", e);
@@ -184,5 +188,57 @@ public class BaseController {
 			
 		}
 		return "install/index";
+	}
+	
+	
+	@RequestMapping(value="/comments/add")
+	public @ResponseBody Comment addcomment(
+			// nicht schön aber selten dafür 
+			// sollte natürlich noch auf ein Object gemappt werden.
+			@RequestParam(value="title", required=false, defaultValue="Kommentar Titel") String title, 
+			@RequestParam(value="content", required=false, defaultValue="Kommentar Inhalt") String content, 
+			@RequestParam(value="relid", required=false) String relid, 
+			@RequestParam(value="rating", required=false, defaultValue="4") String rating) throws Exception{
+		
+		// add comment ...
+		
+		// default: unapproved
+		AssetBean ab = installCommentAssetTypeService.createAsset(
+				title, 
+				title, 
+				"WEM Kommentare", 
+				wcs.getApplicationName(), 
+				title, 
+				null, 
+				content, 
+				relid, 
+				"Product_C", 
+				STATE.WAITING,
+				rating);
+		
+		Comment comment = new Comment();
+		comment.setCreatedby(ab.getCreatedby());
+		comment.setCreateddate(ab.getCreateddate().toString());
+		comment.setId(ab.getId());
+		
+		List<Attribute> attrsList = ab.getAttributes();
+		for(Attribute attr : attrsList){
+			if(attr.getName().equalsIgnoreCase("title")){
+				comment.setTitle(title);
+			}
+			if(attr.getName().equalsIgnoreCase("relid")){
+				comment.setRelid(title);
+			}
+			if(attr.getName().equalsIgnoreCase("reltype")){
+				comment.setReltype(title);
+			}
+			if(attr.getName().equalsIgnoreCase("content")){
+				comment.setContent(title);
+			}
+		}
+		
+		
+		// return view
+		return comment;
 	}
 }

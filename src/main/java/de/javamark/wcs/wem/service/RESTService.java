@@ -110,7 +110,7 @@ public class RESTService {
         builder = builder.header("X-CSRF-Token", this.multiTicket);
 		
 
-        System.out.println(webResource.getURI());
+        log.debug(webResource.getURI());
         
 		// result
         AssetsBean assetsBean = builder.get(AssetsBean.class); 
@@ -138,7 +138,7 @@ public class RESTService {
 		Builder builder = webResource.accept(MediaType.APPLICATION_JSON);
         builder = builder.header("X-CSRF-Token", this.multiTicket);
 		
-        System.out.println(webResource.getURI());
+        log.debug(webResource.getURI());
 		// result
         EnabledTypesBean assetTypesBean = builder.get(EnabledTypesBean.class); 
         
@@ -166,7 +166,7 @@ public class RESTService {
 		Builder builder = webResource.accept(MediaType.APPLICATION_JSON);
         builder = builder.header("X-CSRF-Token", this.multiTicket);
 		
-        System.out.println(webResource.getURI());
+        log.debug(webResource.getURI());
 		// result
         AssetTypeBean assetTypeBean = builder.get(AssetTypeBean.class); 
         
@@ -191,7 +191,7 @@ public class RESTService {
 		Builder builder = webResource.accept(MediaType.APPLICATION_JSON);
         builder = builder.header("X-CSRF-Token", this.multiTicket);
 		
-        System.out.println(webResource.getURI());
+        log.debug(webResource.getURI());
 		// result
         SitesBean sitesBean = builder.get(SitesBean.class); 
         return sitesBean;

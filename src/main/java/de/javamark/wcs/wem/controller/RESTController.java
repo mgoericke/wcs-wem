@@ -15,6 +15,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.fatwire.rest.beans.AssetBean;
+import com.fatwire.rest.beans.Attribute;
 import com.fatwire.wem.sso.SSOException;
 
 import de.javamark.wcs.wem.model.BlogPost;
@@ -28,6 +30,7 @@ public class RESTController {
 	
 	@Autowired
 	RESTService assetService;
+	
 	
 
 	/**
@@ -121,4 +124,6 @@ public class RESTController {
 	public @ResponseBody List<BlogPost> blogposts() throws UnsupportedEncodingException, SSOException{
 		return assetService.getBlogPosts(null);
 	}
+	
+	
 }

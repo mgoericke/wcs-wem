@@ -157,7 +157,7 @@
 										
 												<div class="collapse" th:id="'addcomment' + ${prod.id }">
 													<p  style="font-size:smaller;">					  
-													 	<form th:id="'addcommentform' + ${prod.id }" action="/wem-community/comments/add"  class="form-horizontal">
+													 	<form th:id="'addcommentform' + ${prod.id }" action="/comments/add"  class="form-horizontal">
 															<input type="hidden" id="relid" name="relid" th:value="${prod.id }"/>
 															
 															<div class="form-group">

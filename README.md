@@ -13,6 +13,9 @@ das auf Port 9080 lauscht, konfiguriert. Ein Deployment in einen AppServer ist n
 	* Thymeleaf Template Engine [http://www.thymeleaf.org](http://www.thymeleaf.org)
 	* so wenig JavaScript wie möglich!
 	* Kann als Basis für weitere WEM Applikationen dienen
+	* Spring Boot Actuator [http://docs.spring.io/spring-boot/docs/current/reference/html/production-ready-endpoints.html](http://docs.spring.io/spring-boot/docs/current/reference/html/production-ready-endpoints.html)
+		* [http://localhost:8081/health](http://localhost:8081/health)
+		* ersetze `health` mit `beans`, `dump`, `env` ...
 * Install UI
 	* Installation einer WEM Applikation
 	* Installation von 2 AssetTypes in WCS

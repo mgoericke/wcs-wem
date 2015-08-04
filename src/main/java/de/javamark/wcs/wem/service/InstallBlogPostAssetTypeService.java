@@ -394,13 +394,13 @@ public class InstallBlogPostAssetTypeService {
         //Add the CSRF header
         bld = bld.header("X-CSRF-Token", ticket);
         
-//    	System.out.println("name: " + name);
-//    	System.out.println("desc: " + desc);
-//    	System.out.println("cat: " + cat);
-//    	System.out.println("source: " + source);
-//    	System.out.println("title: " + title);
-//    	System.out.println("state: " + state);
-//    	System.out.println("tags: " + tags);
+//    	log.debug("name: " + name);
+//    	log.debug("desc: " + desc);
+//    	log.debug("cat: " + cat);
+//    	log.debug("source: " + source);
+//    	log.debug("title: " + title);
+//    	log.debug("state: " + state);
+//    	log.debug("tags: " + tags);
                 
     	// name
         AssetBean asset = new AssetBean();
