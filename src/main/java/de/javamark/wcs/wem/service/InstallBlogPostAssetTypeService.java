@@ -71,14 +71,7 @@ public class InstallBlogPostAssetTypeService {
 	 * @see de.javamark.wem.service.FWAssetTypeService#checkType()
 	 */
     public AssetTypeBean getAssetType() throws Exception{
-//        // Create Jersey client.
-//        Client client = Client.create();
-//        String url = config.getRestUrl() + "/types/" + assetTypeName;
-//        WebResource res = client.resource(url);
-//        res = res.queryParam("ticket", SSO.getSSOSession().getTicket(url, config.getCsUsername(), config.getCsPassword()));
-//        Builder bld = res.accept(MediaType.APPLICATION_XML);
-//        bld = bld.header("Pragma", "auth-redirect=false");
-//        
+
         try{
             // Test type for existence.            
             return getBuilder("/types/" + assetTypeName).get(AssetTypeBean.class);
@@ -93,17 +86,6 @@ public class InstallBlogPostAssetTypeService {
 	 * @see de.javamark.wem.service.FWAssetTypeService#createType()
 	 */
     public AssetTypeBean createAssetType() throws Exception{
-//        // Create Jersey client.
-//        Client client = Client.create();
-//        String url = config.getRestUrl() + "/types/" + assetTypeName;
-//        WebResource res = client.resource(url);
-//        String ticket = SSO.getSSOSession().getTicket(url, config.getCsUsername(), config.getCsPassword());
-//        res = res.queryParam("ticket", ticket);
-//        Builder bld = res.accept(MediaType.APPLICATION_XML);     
-//        bld = bld.header("Pragma", "auth-redirect=false");
-//        //Add the CSRF header
-//        bld = bld.header("X-CSRF-Token", ticket);
-
     	
         // Create asset type object.
         AssetTypeBean type = new AssetTypeBean();
@@ -186,21 +168,6 @@ public class InstallBlogPostAssetTypeService {
     
     public IndexConfigBean indexAssetType() throws Exception
     {
-        // Create Jersey client.
-//        Client client = Client.create();
-//        String url = config.getRestUrl() + "/indexes/" + assetTypeName;
-//        WebResource res = client.resource(url);
-//        String ticket = SSO.getSSOSession().getTicket(url, config.getCsUsername(), config.getCsPassword());
-//        res = res.queryParam("ticket", SSO.getSSOSession().getTicket(url, config.getCsUsername(), config.getCsPassword()));
-//        Builder bld = res.accept(MediaType.APPLICATION_XML);
-//        bld = bld.header("Content-Type", MediaType.APPLICATION_XML);
-//        bld = bld.header("Pragma", "auth-redirect=false");
-//        //Add the CSRF header
-//        bld = bld.header("X-CSRF-Token", ticket);
-        
-        
-        
-        
         
         // Create index configuration bean.
         IndexConfigBean config = new IndexConfigBean();
@@ -290,6 +257,7 @@ public class InstallBlogPostAssetTypeService {
         // Create Jersey client.
         Client client = Client.create();
         String url = config.getRestUrl() + "/sites/" + config.getCsSiteName();
+        
         WebResource res = client.resource(url);
         String ticket = SSO.getSSOSession().getTicket(url, config.getCsUsername(), config.getCsPassword());
         res = res.queryParam("ticket", SSO.getSSOSession().getTicket(url, config.getCsUsername(), config.getCsPassword()));
@@ -297,6 +265,8 @@ public class InstallBlogPostAssetTypeService {
         bld = bld.header("Pragma", "auth-redirect=false");
         //Add the CSRF header
         bld = bld.header("X-CSRF-Token", ticket);
+        
+        
         
         // Get site
         SiteBean site = bld.get(SiteBean.class);
@@ -327,17 +297,6 @@ public class InstallBlogPostAssetTypeService {
     		STATE state,
     		List<String> tags) throws Exception
     {
-
-    	
-//        Client client = Client.create();
-//        String url = config.getRestUrl() + "/sites/" + config.getCsSiteName() + "/types/"+assetTypeName+"/assets/0";
-//        WebResource res = client.resource(url);
-//        String ticket = SSO.getSSOSession().getTicket(url, config.getCsUsername(), config.getCsPassword());
-//        res = res.queryParam("ticket", SSO.getSSOSession().getTicket(url, config.getCsUsername(), config.getCsPassword()));
-//        Builder bld = res.accept(MediaType.APPLICATION_XML);
-//        bld = bld.header("Pragma", "auth-redirect=false");
-//        //Add the CSRF header
-//        bld = bld.header("X-CSRF-Token", ticket);
         
                 
     	// Name
@@ -355,10 +314,7 @@ public class InstallBlogPostAssetTypeService {
 
         
         com.fatwire.rest.beans.List list = new com.fatwire.rest.beans.List();
-        List<Struct> items = list.getItems();
-        for(String tag : tags){
-        	
-        	
+        for(String tag : tags){      	
         	Attribute tagAttr = new Attribute();
         	Data tagData = new Data();
         	tagData.setStringValue(tag);

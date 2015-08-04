@@ -24,7 +24,7 @@ import com.sun.jersey.api.client.WebResource.Builder;
 import de.javamark.wcs.wem.WemConfig;
 
 @Service
-public class InstallService {
+public class InstallApplicationService {
 	
 	@Autowired
 	WemConfig wemConfig;

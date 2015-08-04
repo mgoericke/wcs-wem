@@ -2,6 +2,7 @@ package de.javamark.wcs.wem.service;
 
 import java.io.InputStreamReader;
 import java.io.Reader;
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -12,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.fatwire.rest.beans.AssetBean;
+import com.fatwire.rest.beans.AssetInfo;
 import com.fatwire.rest.beans.AssetTypeBean;
 import com.fatwire.rest.beans.Attribute;
 import com.fatwire.rest.beans.Attribute.Data;
@@ -25,17 +27,21 @@ import com.fatwire.rest.beans.IndexStatus;
 import com.fatwire.rest.beans.IndexStatusEnum;
 import com.fatwire.rest.beans.SiteBean;
 import com.fatwire.wem.sso.SSO;
+import com.fatwire.wem.sso.SSOException;
 import com.sun.jersey.api.client.Client;
 import com.sun.jersey.api.client.UniformInterfaceException;
 import com.sun.jersey.api.client.WebResource;
 import com.sun.jersey.api.client.WebResource.Builder;
 
 import de.javamark.wcs.wem.WemConfig;
+import de.javamark.wcs.wem.model.Product;
 
 @Service
-public class InstallCommentAssetTypeService {
+public class InstallCommentAssetTypeService{
 	
-	
+
+	@Autowired
+	RESTService restService;
 	
 	private String assetTypeName		= "FW_Comment";
 	private String assetTypeDescription = "Asset Comments";
@@ -50,6 +56,106 @@ public class InstallCommentAssetTypeService {
 	}
 	
 
+	
+	public void installDummyComments(){
+		// install demo data
+		String[] titles = {
+				"Tolles Produkt.", 
+				"Jederzeit wieder", 
+				"Kann man nur empfehlen", 
+				"Wunderschön", 
+				"Ok, aber verbesserungswürdig", 
+				"kann man kaufen, muß man aber nicht", 
+				"Hatte schon meine Oma!", 
+				"Super, schnell geliefert", 
+				"Spitzengerät ...", 
+				"Jederzeit wieder", 
+				"Kann man nur empfehlen", 
+				"Wunderschön", 
+				"Ok, aber verbesserungswürdig", 
+				"kann man kaufen, muß man aber nicht", 
+				"Hatte schon meine Oma!", 
+				"Super, schnell geliefert", 
+				"Spitzengerät ..."
+		};
+
+		try {
+			List<AssetInfo> assetInfos = restService.search(null, "Product_C", null, null, null, null, null, null).getAssetinfos();	
+			List<Product> productList = new ArrayList<Product>();
+			for(AssetInfo info : assetInfos){
+				String[] id = info.getId().split(":"); // 0=type, 1=id
+				Product product = restService.getProduct(id[0], id[1]);
+				productList.add(product);
+			}
+			
+			int len = 0;
+			if(assetInfos.size() >= titles.length){
+				len = titles.length;
+			}else{
+				len = assetInfos.size();
+			}
+			
+
+			// create comments on products
+			int cnt = 0;
+			for(int i=0; i<len; i++){
+
+				// "random" states for comments ...
+				STATE state = (i%2 == 0)?STATE.APPROVED:STATE.WAITING;
+				
+				
+				try {
+					createAsset(
+							titles[i], 
+							titles[i], 
+							"Produkt Kommentare", 
+							config.getApplicationName(), 
+							titles[i], 
+							null, 
+							"Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.", 
+							productList.get(i).getId(), 
+							"Product_C",
+							state, 
+							"4");
+				} catch (Exception e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+				
+				cnt++;
+				// add a comment to each 3rd product
+				try{
+					
+					if(i%3 == 0){
+						state = (i%2 == 0)?STATE.APPROVED:STATE.WAITING;
+						createAsset(
+								titles[0], 
+								titles[0], 
+								"WEM Kommentare", 
+								config.getApplicationName(), 
+								titles[0], 
+								null, 
+								"Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.", 
+								productList.get(i).getId(), 
+								"Product_C",
+								state, "3");
+						cnt++;
+					}
+				}catch(Exception e){
+					e.printStackTrace();
+				}
+			}
+			
+			
+		} catch (UnsupportedEncodingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (SSOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
 	/* (non-Javadoc)
 	 * @see de.javamark.wem.service.FWAssetTypeService#checkType()
 	 */

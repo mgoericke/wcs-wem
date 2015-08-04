@@ -7,6 +7,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
@@ -62,5 +63,13 @@ public class PubController {
 		}
 		
 		return "app/index";
+	}
+
+	@RequestMapping(value="/comments/product/{productid}")
+	public String comments(@PathVariable(value="productid") String productid, Model model){
+		
+		// lade kommentare und übergib diese an das Comment Template
+		System.out.println("lade comments für :" + productid);
+		return "comments/template";
 	}
 }

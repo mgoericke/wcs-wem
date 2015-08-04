@@ -11,7 +11,7 @@ import com.fatwire.rest.beans.AssetTypeBean;
 import de.javamark.wcs.wem.WemConfig;
 import de.javamark.wcs.wem.service.InstallBlogPostAssetTypeService;
 import de.javamark.wcs.wem.service.InstallCommentAssetTypeService;
-import de.javamark.wcs.wem.service.InstallService;
+import de.javamark.wcs.wem.service.InstallApplicationService;
 import de.javamark.wcs.wem.service.RESTService;
 
 @Controller
@@ -24,7 +24,7 @@ public class BaseController {
 	RESTService restService;
 	
 	@Autowired 
-	InstallService installService;
+	InstallApplicationService installService;
 
 	@Autowired 
 	InstallCommentAssetTypeService installCommentAssetTypeService;
@@ -58,8 +58,8 @@ public class BaseController {
 		
 		Application wemapp = installService.getApplication();
 		
-		if(wemapp == null){
-			
+		// WEM Application
+		if(wemapp == null){			
 			wemapp = installService.createApplication();
 			model.addAttribute("msg", "wem application created");
 			wemapp = installService.createApplication();
@@ -68,21 +68,36 @@ public class BaseController {
 		}
 		model.addAttribute("wemapp", wemapp);
 
-
+		// Comments AssetType
 		AssetTypeBean commentType = installCommentAssetTypeService.getAssetType();
 		if(commentType == null){
+			commentType = installCommentAssetTypeService.createAssetType();
+			installCommentAssetTypeService.enableAssetType();
+			installCommentAssetTypeService.indexAssetType();
+			installCommentAssetTypeService.installDummyComments();
 			model.addAttribute("commentTypeMsg", "comment assettype created");			
 		}else{
 			model.addAttribute("commentTypeMsg", "comment assettype already installed");
 		}
-		
-		AssetTypeBean blobPostType = installBlogPostAssetTypeService.getAssetType();
-		if(blobPostType == null){
+		model.addAttribute("commentType", commentType);
+
+		try{
+			
+		// BlogPost AssetType
+		AssetTypeBean blogPostType = installBlogPostAssetTypeService.getAssetType();
+		if(blogPostType == null){
+			blogPostType = installBlogPostAssetTypeService.createAssetType();
+			installBlogPostAssetTypeService.enableAssetType();
+			installBlogPostAssetTypeService.indexAssetType();
 			model.addAttribute("blogPostTypeMsg", "blog post assettype created");			
 		}else{
 			model.addAttribute("blogPostTypeMsg", "blog post assettype already installed");
 		}
-		
+		model.addAttribute("blogPostType", blogPostType);
+
+		}catch(Exception e){
+			
+		}
 		return "install/index";
 	}
 }

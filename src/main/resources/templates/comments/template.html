@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+ <body>
+
+	<ul style="font-size:smaller;">
+		<li th:each="comment : ${comments}">
+			<p>
+				<a data-toggle="collapse" href="#comment" aria-expanded="false" aria-controls="comment"> 
+			    	<span th:text="${comment.title }"></span> [<span th:text="${comment.createdby }"></span>:<span th:text="${comment.createddate }"></span>] [rating: <span th:text="${comment.rating }"></span>]
+			    </a>
+			</p>	
+			<div class="collapse" id="comment">
+			<div th:utext="${comment.content }">				
+			</div>
+			</div>  				
+		</li>
+	</ul>
+</body>
+</html>
+          		

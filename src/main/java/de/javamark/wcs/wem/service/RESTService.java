@@ -29,6 +29,7 @@ import com.sun.jersey.api.client.WebResource;
 import com.sun.jersey.api.client.WebResource.Builder;
 
 import de.javamark.wcs.wem.WemConfig;
+import de.javamark.wcs.wem.model.Comment;
 import de.javamark.wcs.wem.model.Product;
 
 /**
@@ -218,6 +219,10 @@ public class RESTService {
 	}
 	
 
+	public List<Comment> getComments(String productid){
+		return null;
+	}
+	
 	public Product getProduct(String type, String id) throws SSOException{
 		AssetBean aBean = read(type, id);
 		
