@@ -1,6 +1,8 @@
 package de.javamark.wcs.wem.controller;
 
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.util.List;
 
 import org.apache.log4j.Logger;
 import org.codehaus.jackson.JsonGenerationException;
@@ -10,10 +12,13 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.fatwire.wem.sso.SSOException;
 
+import de.javamark.wcs.wem.model.BlogPost;
+import de.javamark.wcs.wem.model.Comment;
 import de.javamark.wcs.wem.service.RESTService;
 import de.javamark.wcs.wem.utils.Mapper;
 
@@ -35,7 +40,7 @@ public class RESTController {
 	 * @throws JsonMappingException 
 	 * @throws JsonGenerationException 
 	 */
-	@RequestMapping(value="/sites",
+	@RequestMapping(value="/wcs/sites",
 			method=RequestMethod.GET,
 			produces="application/json")
 	public String sites(@RequestParam(value="sites", required=false) String sites) throws SSOException, JsonGenerationException, JsonMappingException, IOException{		
@@ -53,7 +58,7 @@ public class RESTController {
 	 * @throws JsonMappingException 
 	 * @throws JsonGenerationException 
 	 */
-	@RequestMapping(value="/assets/types",
+	@RequestMapping(value="/wcs/assets/types",
 			method=RequestMethod.GET,
 			produces="application/json")
 	public String enabledTypes(@RequestParam(value="sites", required=false) String sites) throws SSOException, JsonGenerationException, JsonMappingException, IOException{		
@@ -71,7 +76,7 @@ public class RESTController {
 	 * @throws JsonMappingException
 	 * @throws IOException
 	 */
-	@RequestMapping(value="/assets/types/{assettype}",
+	@RequestMapping(value="/wcs/assets/types/{assettype}",
 			method=RequestMethod.GET,
 			produces="application/json")
 	public String types(@PathVariable(value="assettype") String assettype) throws SSOException, JsonGenerationException, JsonMappingException, IOException{		
@@ -89,7 +94,7 @@ public class RESTController {
 	 * @throws JsonMappingException 
 	 * @throws JsonGenerationException 
 	 */
-	@RequestMapping(value="/assets/types/{assettype}/search",
+	@RequestMapping(value="/wcs/assets/types/{assettype}/search",
 			method=RequestMethod.GET,
 			produces="application/json")
 	public String searchAssets(@PathVariable(value="assettype") String assettype,
@@ -102,5 +107,18 @@ public class RESTController {
 			@RequestParam(value="sortDirection", required=false) String sortDirection) throws SSOException, JsonGenerationException, JsonMappingException, IOException{
 		
 		return Mapper.toJSON(assetService.search(sites, assettype, query, fields, startIndex, count, sortField, sortDirection));		
+	}
+
+	@RequestMapping(value="/comments",
+			method=RequestMethod.GET,
+			produces="application/json")
+	public @ResponseBody List<Comment> comments() throws UnsupportedEncodingException, SSOException{
+		return assetService.getComments(null);
+	}
+	@RequestMapping(value="/blogposts",
+			method=RequestMethod.GET,
+			produces="application/json")
+	public @ResponseBody List<BlogPost> blogposts() throws UnsupportedEncodingException, SSOException{
+		return assetService.getBlogPosts(null);
 	}
 }

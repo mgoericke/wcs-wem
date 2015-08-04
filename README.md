@@ -27,11 +27,11 @@ das auf Port 9080 lauscht, konfiguriert. Ein Deployment in einen AppServer ist n
 	* Erstellen neuer Kommentare
 	* Suche in Produkten
 * Simple JSON REST API (Wrapper für REST Aufrufe in Web Center Sites)
-	* Sites: [http://localhost:8081/sites](http://localhost:8081/sites)
-	* Enabled Asset Types: [http://localhost:8081/assets/types](http://localhost:8081/assets/types)
-	* Asset Type Definition [http://localhost:8081/assets/types/FW_Comment](http://localhost:8081/assets/types/FW_Comment)
+	* Sites: [http://localhost:8081/wcs/sites](http://localhost:8081/wcs/sites)
+	* Enabled Asset Types: [http://localhost:8081/wcs/assets/types](http://localhost:8081/wcs/assets/types)
+	* Asset Type Definition [http://localhost:8081/wcs/assets/types/FW_Comment](http://localhost:8081/wcs/assets/types/FW_Comment)
 		* Ersetze FW_Comment mit einem beliebigen Asset Type
-	* Asset Search: http://localhost:8081/assets/types/FW_Comment/search
+	* Asset Search: http://localhost:8081/wcs/assets/types/FW_Comment/search
 		* Ersetze FW_Comment mit einem beliebigen Asset Type
 		* Optionale Parameter:
 			* sites (Name einer Site)
@@ -41,6 +41,9 @@ das auf Port 9080 lauscht, konfiguriert. Ein Deployment in einen AppServer ist n
 			* count	(Anzahl der Ergebnisse)
 			* sortField (Attribut, nach dem sortiert werden soll)
 			* sortDirection (aufsteigend oder absteigend, asc|desc)
+* Simple JSON REST API - Kommentare / BlogPosts
+	* Kommentare [http://localhost:8081/comments](http://localhost:8081/comments)
+	* Blog Posts [http://localhost:8081/blogposts](http://localhost:8081/blogposts)
 
 
 
