@@ -7,16 +7,19 @@ import java.io.UnsupportedEncodingException;
 import java.net.URL;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import javax.ws.rs.core.MediaType;
 
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.fatwire.rest.beans.AssetBean;
+import com.fatwire.rest.beans.AssetInfo;
 import com.fatwire.rest.beans.AssetTypeBean;
 import com.fatwire.rest.beans.AssetsBean;
 import com.fatwire.rest.beans.Attribute;
@@ -31,6 +34,7 @@ import com.sun.jersey.api.client.WebResource.Builder;
 import de.javamark.wcs.wem.WemConfig;
 import de.javamark.wcs.wem.model.Comment;
 import de.javamark.wcs.wem.model.Product;
+import de.javamark.wcs.wem.utils.Mapper;
 
 /**
  * @author mark
@@ -39,6 +43,8 @@ import de.javamark.wcs.wem.model.Product;
 @Service
 public class RESTService {
 
+	Logger log = Logger.getLogger("de.javamark.wcs.wem.service");
+	
 	@Autowired
 	WemConfig wcs;
 	
@@ -219,8 +225,46 @@ public class RESTService {
 	}
 	
 
-	public List<Comment> getComments(String productid){
-		return null;
+	public List<Comment> getComments(String productid) throws UnsupportedEncodingException, SSOException{
+
+		// name of all attributes included in result
+        String fields = "name,description,content,cat,source,title,relid,reltype,state,createdby,updateddate,rating";
+		
+        List<AssetInfo> assetinfoList = search(wcs.getCsSiteName(), "FW_Comment", productid, fields, null, null, null, null).getAssetinfos();
+        List<Comment> assets = null;
+        
+        
+        if(assetinfoList!= null && assetinfoList.size()>0){
+        	assets = new ArrayList<Comment>();
+	        for(AssetInfo info : assetinfoList){
+	        	
+	        		
+	        	
+	        	String relid = Mapper.getField("relid",info.getFieldinfos());
+	        	String reltype = Mapper.getField("reltype",info.getFieldinfos());
+
+
+	        	Comment a = new Comment();
+	        	a.setId(info.getId().split(":")[1]);
+	        	a.setDescription(Mapper.getField("description",info.getFieldinfos()) );
+	        	a.setName(Mapper.getField("name",info.getFieldinfos()) );
+	        	a.setTitle(Mapper.getField("title",info.getFieldinfos()) );
+	        	a.setContent(Mapper.getField("content",info.getFieldinfos()) );
+	        	a.setState(Mapper.getField("state",info.getFieldinfos()) );
+	        	a.setRating(Mapper.getField("rating",info.getFieldinfos()) );		        	
+	        	a.setRelid(relid);
+	        	a.setReltype(reltype);
+
+	        	a.setCreatedby(Mapper.getField("createdby",info.getFieldinfos()) );
+	        	a.setCreateddate(Mapper.getField("updateddate",info.getFieldinfos()) );
+
+
+	        	assets.add(a);
+	        }
+        }
+        
+        return assets;
+		
 	}
 	
 	public Product getProduct(String type, String id) throws SSOException{

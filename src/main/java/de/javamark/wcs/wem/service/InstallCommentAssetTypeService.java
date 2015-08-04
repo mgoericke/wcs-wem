@@ -9,6 +9,7 @@ import java.util.List;
 
 import javax.ws.rs.core.MediaType;
 
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -38,7 +39,8 @@ import de.javamark.wcs.wem.model.Product;
 
 @Service
 public class InstallCommentAssetTypeService{
-	
+
+	Logger log = Logger.getLogger("de.javamark.wcs.wem.service");
 
 	@Autowired
 	RESTService restService;
@@ -97,7 +99,6 @@ public class InstallCommentAssetTypeService{
 			
 
 			// create comments on products
-			int cnt = 0;
 			for(int i=0; i<len; i++){
 
 				// "random" states for comments ...
@@ -122,7 +123,6 @@ public class InstallCommentAssetTypeService{
 					e1.printStackTrace();
 				}
 				
-				cnt++;
 				// add a comment to each 3rd product
 				try{
 					
@@ -139,7 +139,6 @@ public class InstallCommentAssetTypeService{
 								productList.get(i).getId(), 
 								"Product_C",
 								state, "3");
-						cnt++;
 					}
 				}catch(Exception e){
 					e.printStackTrace();
@@ -458,6 +457,7 @@ public class InstallCommentAssetTypeService{
     		STATE state,
     		String rating) throws Exception
     {
+
 
     	
         Client client = Client.create();

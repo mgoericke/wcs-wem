@@ -1,4 +1,15 @@
-    	$(document).ready(function(){
+/**
+ * required:jquery
+ */    	
+
+var DEBUG = true;
+
+function log(msg){
+	if(DEBUG)
+		console.log(msg);
+}
+
+$(document).ready(function(){
 
 			// Embed the frame pointing to the protected page,
 			// this way the login form will be displayed in this frame.
@@ -6,13 +17,32 @@
 			var iframe = "<iframe id='ifr_cont_relay' type='text/html' style='overflow-x: hidden; overflow-y: hidden;' border='0' frameborder='0' width='350px' height='240px' src='" + url + "'></iframe>";
 			
 			$('#signinContainer').append(iframe);
-					
+			
+			/*
 			// load comments and display below the product
-	    	$('.comments').each(function(){
-	    		$(this).click(function(){
-	    			console.log('clicked: ' + $(this).attr('prod-id'));
+	    	$('.comments a').each(function(){
+	    		
+	    		var prodId = $(this).attr('prod-id')
+	    		var parent = $(this).parent();
+	    		
+	    		$(this).click(function(evt){
+	    			console.log('clicked: ' + prodId );
+	    			
+	    			commentsUrl = '/comments/product/' + prodId;
+	    			$.ajax({
+	    				url : commentsUrl
+	    			}).done(function(data){
+	    				parent.append(data);
+	    			}).fail(function(){
+	    				log('something went wrong while loading comments for product');
+	    			}).always(function(){
+	    				log('load comments for product');
+	    			});
+	    			
+	    			evt.preventDefault();
 	    		});
 	    	});
+	    	*/
 			
 			
     	});

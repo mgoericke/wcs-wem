@@ -1,13 +1,12 @@
 package de.javamark.wcs.wem.service;
 
-import java.io.InputStreamReader;
-import java.io.Reader;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
 import javax.ws.rs.core.MediaType;
 
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -24,7 +23,6 @@ import com.fatwire.rest.beans.IndexFieldTypeEnum;
 import com.fatwire.rest.beans.IndexStatus;
 import com.fatwire.rest.beans.IndexStatusEnum;
 import com.fatwire.rest.beans.SiteBean;
-import com.fatwire.rest.beans.Struct;
 import com.fatwire.wem.sso.SSO;
 import com.fatwire.wem.sso.SSOException;
 import com.sun.jersey.api.client.Client;
@@ -36,7 +34,8 @@ import de.javamark.wcs.wem.WemConfig;
 
 @Service
 public class InstallBlogPostAssetTypeService {
-	
+
+	Logger log = Logger.getLogger("de.javamark.wcs.wem.service");
 	
 	
 	private String assetTypeName		= "FW_BlogPost";
@@ -51,6 +50,94 @@ public class InstallBlogPostAssetTypeService {
 		REJECTED
 	}
 	
+	
+	
+	public void installDummyContents(){
+		// install demo data
+		String[] titles = {
+				"Tolles Produkt.", 
+				"Jederzeit wieder", 
+				"Kann man nur empfehlen", 
+				"Wunderschön", 
+				"Ok, aber verbesserungswürdig", 
+				"kann man kaufen, muß man aber nicht", 
+				"Hatte schon meine Oma!", 
+				"Super, schnell geliefert", 
+				"Spitzengerät ...", 
+				"Jederzeit wieder", 
+				"Kann man nur empfehlen", 
+				"Wunderschön", 
+				"Ok, aber verbesserungswürdig", 
+				"kann man kaufen, muß man aber nicht", 
+				"Hatte schon meine Oma!", 
+				"Super, schnell geliefert", 
+				"Spitzengerät ..."
+		};
+		String[] tags = {
+				"Produkte", 
+				"Einkauf", 
+				"Empfehlung", 
+				"Aussehen", 
+				"Empfehlung", 
+				"Empfehlung", 
+				"Empfehlung", 
+				"Lieferung", 
+				"Produkte", 
+				"Empfehlung", 
+				"Empfehlung", 
+				"Produkte", 
+				"Lieferung", 
+				"Produkte", 
+				"Empfehlung", 
+				"Lieferung", 
+				"Produkte"
+		};
+
+		// create comments on products
+		int cnt = 0;
+		for(int i=0; i<titles.length; i++){
+
+			// "random" states for comments ...
+			STATE state = (i%2 == 0)?STATE.APPROVED:STATE.WAITING;
+			
+			
+			try {
+				createAsset(
+						titles[i], 
+						titles[i], 
+						"WEM Blog", 
+						config.getApplicationName(), 
+						titles[i], 
+						"Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.", 
+						state, 
+						tags[i]);
+			} catch (Exception e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+			
+			cnt++;
+			// add a comment to each 3rd product
+			try{
+				
+				if(i%3 == 0){
+					state = (i%2 == 0)?STATE.APPROVED:STATE.WAITING;
+					createAsset(
+							titles[i], 
+							titles[i], 
+							"WEM Blog", 
+							config.getApplicationName(), 
+							titles[i], 
+							"Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.", 
+							state, 
+							tags[i]);
+					cnt++;
+				}
+			}catch(Exception e){
+				e.printStackTrace();
+			}
+		}
+	}
 	
 	private Builder getBuilder(String uri) throws SSOException{
         // Create Jersey client.
@@ -143,7 +230,7 @@ public class InstallBlogPostAssetTypeService {
         // Populate tags attribute definition.
         AttributeDefBean tags_attr = new AttributeDefBean();
         tags_attr.setName("tags");
-        tags_attr.setType(AttributeTypeEnum.ARRAY);
+        tags_attr.setType(AttributeTypeEnum.STRING);
         tags_attr.setDescription("Tags");
         tags_attr.setIsDataMandatory(true);
         tags_attr.setIsMetaData(false);
@@ -292,19 +379,36 @@ public class InstallBlogPostAssetTypeService {
     		String cat, 
     		String source, 
     		String title,
-    		String filename,
     		String content,
     		STATE state,
-    		List<String> tags) throws Exception
+    		String tags) throws Exception
     {
+
+        Client client = Client.create();
+        String url = config.getRestUrl() + "/sites/" + config.getCsSiteName() + "/types/"+assetTypeName+"/assets/0";
+        WebResource res = client.resource(url);
+        String ticket = SSO.getSSOSession().getTicket(url, config.getCsUsername(), config.getCsPassword());
+        res = res.queryParam("ticket", SSO.getSSOSession().getTicket(url, config.getCsUsername(), config.getCsPassword()));
+        Builder bld = res.accept(MediaType.APPLICATION_XML);
+        bld = bld.header("Pragma", "auth-redirect=false");
+        //Add the CSRF header
+        bld = bld.header("X-CSRF-Token", ticket);
         
+//    	System.out.println("name: " + name);
+//    	System.out.println("desc: " + desc);
+//    	System.out.println("cat: " + cat);
+//    	System.out.println("source: " + source);
+//    	System.out.println("title: " + title);
+//    	System.out.println("state: " + state);
+//    	System.out.println("tags: " + tags);
                 
-    	// Name
+    	// name
         AssetBean asset = new AssetBean();
         asset.setId(this.assetTypeName + ":0");
         asset.setName(name);
         asset.setDescription(desc);
 
+        // state
         Attribute state_attr = new Attribute();
         Data state_data = new Data();
         state_data.setStringValue(state.toString());
@@ -312,24 +416,16 @@ public class InstallBlogPostAssetTypeService {
         state_attr.setName("state");
         asset.getAttributes().add(state_attr);
 
-        
-        com.fatwire.rest.beans.List list = new com.fatwire.rest.beans.List();
-        for(String tag : tags){      	
-        	Attribute tagAttr = new Attribute();
-        	Data tagData = new Data();
-        	tagData.setStringValue(tag);
-        	Struct s = new Struct();
-        	s.getItems().add(tagAttr);
-        	list.getItems().add(s);
-        }
-        
+     
+        // tags
         Attribute tags_attr = new Attribute();
         Data tags_data = new Data();
-        tags_data.setListValue(list);
+        tags_data.setStringValue(tags);
         tags_attr.setData(tags_data);
         tags_attr.setName("tags");
         asset.getAttributes().add(tags_attr);
 
+        // cat
         Attribute cat_attr = new Attribute();
         Data cat_data = new Data();
         cat_data.setStringValue(cat);
@@ -337,6 +433,7 @@ public class InstallBlogPostAssetTypeService {
         cat_attr.setName("cat");
         asset.getAttributes().add(cat_attr);
 
+        // source
         Attribute source_attr = new Attribute();
         Data source_data = new Data();
         source_data.setStringValue(source);
@@ -344,21 +441,15 @@ public class InstallBlogPostAssetTypeService {
         source_attr.setName("source");
         asset.getAttributes().add(source_attr);
 
-        
-        // read content from file ... DEMO CONTENT
-        // otherwise use the content parameter
-        if(filename != null){
-            ClassLoader cl = InstallBlogPostAssetTypeService.class.getClassLoader();
-            Reader txt = new InputStreamReader(cl.getResourceAsStream("install/" + filename + ".txt"), "UTF-8");
-            int numread = 0;
-            char[] cbuff = new char[1024];
-            while(-1 != (numread = txt.read(cbuff))){
-                content += String.valueOf(cbuff, 0, numread);
-            }
-        }else{
-        	// assume that content is not null ;)
-        }
+        // title
+        Attribute title_attr = new Attribute();
+        Data title_data = new Data();
+        title_data.setStringValue(title);
+        title_attr.setData(title_data);
+        title_attr.setName("title");
+        asset.getAttributes().add(title_attr);
 
+        // content
         Attribute content_attr = new Attribute();
         Data content_data = new Data();
         content_data.setStringValue(content);
@@ -370,7 +461,7 @@ public class InstallBlogPostAssetTypeService {
 
         asset.getPublists().addAll(Collections.singletonList(config.getCsSiteName()));
 
-        return getBuilder("/sites/" + config.getCsSiteName() + "/types/"+assetTypeName+"/assets/0").put(AssetBean.class, asset);
+        return bld.put(AssetBean.class, asset);
     }
     
 }

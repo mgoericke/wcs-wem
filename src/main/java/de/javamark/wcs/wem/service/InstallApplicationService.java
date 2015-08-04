@@ -5,6 +5,7 @@ import java.net.URLEncoder;
 
 import javax.ws.rs.core.MediaType;
 
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -25,6 +26,7 @@ import de.javamark.wcs.wem.WemConfig;
 
 @Service
 public class InstallApplicationService {
+	Logger log = Logger.getLogger("de.javamark.wcs.wem.service");
 	
 	@Autowired
 	WemConfig wemConfig;

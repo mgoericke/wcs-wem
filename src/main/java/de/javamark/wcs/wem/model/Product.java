@@ -1,5 +1,7 @@
 package de.javamark.wcs.wem.model;
 
+import java.util.List;
+
 public class Product {
 	private String createdby,
 	updateddate,
@@ -12,8 +14,18 @@ public class Product {
 	image,
 	blobUrl;
 	
+	private List<Comment> comments;
 	
 	
+	
+
+	public List<Comment> getComments() {
+		return comments;
+	}
+
+	public void setComments(List<Comment> comments) {
+		this.comments = comments;
+	}
 
 	public String getImage() {
 		return image;

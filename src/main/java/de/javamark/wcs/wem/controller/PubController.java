@@ -4,6 +4,7 @@ import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -17,11 +18,13 @@ import com.fatwire.wem.sso.SSOException;
 import com.fatwire.wem.sso.SSOPrincipal;
 
 import de.javamark.wcs.wem.WemConfig;
+import de.javamark.wcs.wem.model.Comment;
 import de.javamark.wcs.wem.model.Product;
 import de.javamark.wcs.wem.service.RESTService;
 
 @Controller
 public class PubController {
+	Logger log = Logger.getLogger("de.javamark.wcs.wem.controller");
 	@Autowired
 	WemConfig wcs;
 
@@ -38,17 +41,18 @@ public class PubController {
 	 * @throws UnsupportedEncodingException 
 	 */
 	@RequestMapping(value="/app")
-	public String app(Model model, @RequestParam(value="filter", required=false) String filter) throws UnsupportedEncodingException, SSOException{
+	public String app(Model model, @RequestParam(value="filter", required=false) String filter){
 		
 		// always add config to context
 		model.addAttribute("config", wcs);
-		
+
+		try {
 		List<AssetInfo> assetInfos = restService.search(null, "Product_C", filter, null, null, null, null, null).getAssetinfos();
 		List<Product> products = new ArrayList<Product>();
 		for(AssetInfo info : assetInfos){
 			String[] id = info.getId().split(":");
 			Product product = restService.getProduct(id[0], id[1]);
-			
+			product.setComments(restService.getComments(id[1]));
 			products.add(product);
 		}
 		
@@ -61,6 +65,11 @@ public class PubController {
 			
 			model.addAttribute("userDisplayName", user.getDisplayName());
 		}
+		}catch(SSOException e){
+			model.addAttribute("error", e);
+		}catch (Exception e) {
+			model.addAttribute("error", e);
+		}
 		
 		return "app/index";
 	}
@@ -69,7 +78,16 @@ public class PubController {
 	public String comments(@PathVariable(value="productid") String productid, Model model){
 		
 		// lade kommentare und übergib diese an das Comment Template
-		System.out.println("lade comments für :" + productid);
+		log.debug("lade comments für :" + productid);
+		try {
+			List<Comment> commentsList = restService.getComments(productid);
+			model.addAttribute("comments", commentsList);
+		} catch (UnsupportedEncodingException e) {
+			model.addAttribute("error", e);
+		} catch (SSOException e) {
+			model.addAttribute("error", e);
+		}
+		
 		return "comments/template";
 	}
 }

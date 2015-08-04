@@ -51,6 +51,7 @@
     <!-- Your application protected resources excludes (relative to applicationUrl) -->
     <property name="protectedMappingExcludes">
       <list>
+        <value>/comments*</value>      
         <value>/app*</value>        
         <value>/css/*</value>
         <value>/js/*</value>

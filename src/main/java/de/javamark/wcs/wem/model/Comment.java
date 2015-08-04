@@ -1,6 +1,5 @@
 package de.javamark.wcs.wem.model;
 
-import java.util.List;
 
 
 public class Comment {

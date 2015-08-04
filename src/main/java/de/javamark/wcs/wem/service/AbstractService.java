@@ -2,6 +2,7 @@ package de.javamark.wcs.wem.service;
 
 import javax.ws.rs.core.MediaType;
 
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.fatwire.wem.sso.SSO;
@@ -13,6 +14,7 @@ import com.sun.jersey.api.client.WebResource.Builder;
 import de.javamark.wcs.wem.WemConfig;
 
 public abstract class AbstractService {
+	Logger log = Logger.getLogger("de.javamark.wcs.wem.service");
 
 	@Autowired
 	WemConfig config;

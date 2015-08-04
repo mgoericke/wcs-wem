@@ -10,6 +10,7 @@ das auf Port 9080 lauscht, konfiguriert. Ein Deployment in einen AppServer ist n
 * Spring Boot Applikation
 	* Installation / Start ohne AppServer
 	* Annotation based Spring Configuration
+	* Thymeleaf Template Engine [http://www.thymeleaf.org](http://www.thymeleaf.org)
 * Install UI
 	* Installation einer WEM Applikation
 	* Installation von 2 AssetTypes in WCS

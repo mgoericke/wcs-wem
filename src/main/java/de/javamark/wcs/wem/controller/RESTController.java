@@ -2,6 +2,7 @@ package de.javamark.wcs.wem.controller;
 
 import java.io.IOException;
 
+import org.apache.log4j.Logger;
 import org.codehaus.jackson.JsonGenerationException;
 import org.codehaus.jackson.map.JsonMappingException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +19,7 @@ import de.javamark.wcs.wem.utils.Mapper;
 
 @RestController
 public class RESTController {
+	Logger log = Logger.getLogger("de.javamark.wcs.wem.controller");
 	
 	@Autowired
 	RESTService assetService;

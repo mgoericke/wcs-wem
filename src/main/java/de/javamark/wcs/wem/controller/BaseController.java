@@ -1,5 +1,6 @@
 package de.javamark.wcs.wem.controller;
 
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -16,6 +17,8 @@ import de.javamark.wcs.wem.service.RESTService;
 
 @Controller
 public class BaseController {
+	
+	Logger log = Logger.getLogger("de.javamark.wcs.wem.controller");
 	
 	@Autowired
 	WemConfig wcs;
@@ -75,7 +78,7 @@ public class BaseController {
 			installCommentAssetTypeService.enableAssetType();
 			installCommentAssetTypeService.indexAssetType();
 			installCommentAssetTypeService.installDummyComments();
-			model.addAttribute("commentTypeMsg", "comment assettype created");			
+			model.addAttribute("commentTypeMsg", "comment assettype created and dummy content installed (<a href=\""+wcs.getRestUrl() + "/types/FW_Comment/search\" target=\"_blank\">Search Assets</a>)");			
 		}else{
 			model.addAttribute("commentTypeMsg", "comment assettype already installed");
 		}
@@ -89,7 +92,8 @@ public class BaseController {
 			blogPostType = installBlogPostAssetTypeService.createAssetType();
 			installBlogPostAssetTypeService.enableAssetType();
 			installBlogPostAssetTypeService.indexAssetType();
-			model.addAttribute("blogPostTypeMsg", "blog post assettype created");			
+			installBlogPostAssetTypeService.installDummyContents();
+			model.addAttribute("blogPostTypeMsg", "blog post assettype created and dummy content installed (<a href=\""+wcs.getRestUrl() + "/types/FW_BlogPost/search\" target=\"_blank\">Search Assets</a>)");			
 		}else{
 			model.addAttribute("blogPostTypeMsg", "blog post assettype already installed");
 		}
