@@ -11,6 +11,8 @@ das auf Port 9080 lauscht, konfiguriert. Ein Deployment in einen AppServer ist n
 	* Installation / Start ohne AppServer
 	* Annotation based Spring Configuration
 	* Thymeleaf Template Engine [http://www.thymeleaf.org](http://www.thymeleaf.org)
+	* so wenig JavaScript wie möglich!
+	* Kann als Basis für weitere WEM Applikationen dienen
 * Install UI
 	* Installation einer WEM Applikation
 	* Installation von 2 AssetTypes in WCS
@@ -22,6 +24,21 @@ das auf Port 9080 lauscht, konfiguriert. Ein Deployment in einen AppServer ist n
 	* Anzeige von Kommentaren zu PRodukten
 	* Erstellen neuer Kommentare
 	* Suche in Produkten
+* Simple JSON REST API (Wrapper für REST Aufrufe in Web Center Sites)
+	* Sites: [http://localhost:8081/sites](http://localhost:8081/sites)
+	* Enabled Asset Types: [http://localhost:8081/assets/types](http://localhost:8081/assets/types)
+	* Asset Type Definition [http://localhost:8081/assets/types/FW_Comment](http://localhost:8081/assets/types/FW_Comment)
+		* Ersetze FW_Comment mit einem beliebigen Asset Type
+	* Asset Search: http://localhost:8081/assets/types/FW_Comment/search
+		* Ersetze FW_Comment mit einem beliebigen Asset Type
+		* Optionale Parameter:
+			* sites (Name einer Site)
+			* query	(Suchbegriff, Suche erfolgt in indizierten Feldern)
+			* fields (Attribute Names, Attribute, die im Ergebnis enthalten sein sollen)
+			* startIndex (Startpunkt für Paging)
+			* count	(Anzahl der Ergebnisse)
+			* sortField (Attribut, nach dem sortiert werden soll)
+			* sortDirection (aufsteigend oder absteigend, asc|desc)
 
 
 

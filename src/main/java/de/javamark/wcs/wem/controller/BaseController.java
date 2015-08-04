@@ -1,18 +1,24 @@
 package de.javamark.wcs.wem.controller;
 
+import java.io.UnsupportedEncodingException;
+import java.util.List;
+
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import com.fatwire.rest.beans.Application;
 import com.fatwire.rest.beans.AssetTypeBean;
+import com.fatwire.wem.sso.SSOException;
 
 import de.javamark.wcs.wem.WemConfig;
+import de.javamark.wcs.wem.model.Comment;
+import de.javamark.wcs.wem.service.InstallApplicationService;
 import de.javamark.wcs.wem.service.InstallBlogPostAssetTypeService;
 import de.javamark.wcs.wem.service.InstallCommentAssetTypeService;
-import de.javamark.wcs.wem.service.InstallApplicationService;
 import de.javamark.wcs.wem.service.RESTService;
 
 @Controller
@@ -44,9 +50,52 @@ public class BaseController {
 	 */
 	@RequestMapping(value="/admin")
 	public String admin(Model model){		
-		model.addAttribute("config", wcs);		
+		model.addAttribute("config", wcs);
 		return "admin/index";
 	}
+	@RequestMapping(value="/admin/comments")
+	public String adminComments(@RequestParam(value="state", required=false, defaultValue="waiting") String state,Model model){		
+		
+		if(state.equalsIgnoreCase("all")){
+			state = null;
+		}
+				
+		model.addAttribute("config", wcs);
+		
+		// lade kommentare
+		try {
+			List<Comment> comments = restService.getComments(state);
+			
+			if(comments != null){
+				// hänge das Product an, zu dem der Kommentar gehört
+				for(Comment comment : comments){
+					comment.setProduct(restService.getProduct(comment.getReltype(), comment.getRelid()));
+				}
+				
+				model.addAttribute("comments", comments);
+			}else{
+				System.out.println("hmmm ... no comments found");
+			}
+		} catch (UnsupportedEncodingException e) {
+			model.addAttribute("error", e);
+		} catch (SSOException e) {
+			model.addAttribute("error", e);
+		}
+		
+		return "admin/index";
+	}	
+	
+	@RequestMapping(value="/admin/blogposts")
+	public String adminBlogPosts(@RequestParam(value="state", required=false, defaultValue="wating") String state,Model model){		
+		model.addAttribute("config", wcs);
+		
+		// lade blogposts
+		
+		
+		return "admin/index";
+	}
+	
+	
 	
 	/**
 	 * Installer	http://hostname:port/install

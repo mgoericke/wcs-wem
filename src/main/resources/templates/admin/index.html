@@ -1,35 +1,82 @@
-<!DOCTYPE HTML>
+<!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<head>
+  <head>
     <meta charset="utf-8"/>
     <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
     <meta name="viewport" content="width=device-width, initial-scale=1"/>
     <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
-    <title>WEM Admin UI</title>
+    <meta name="description" content=""/>
+    <meta name="author" content=""/>
 
-    <!-- Bootstrap -->
-    <link href="/css/bootstrap.min.css" rel="stylesheet" />
+    <title>Coole WEM Applikation</title>
+
+    <!-- Bootstrap core CSS -->
+    <link href="/css/bootstrap.min.css" rel="stylesheet"/>
+
+    <!-- Custom styles for this template -->
+    <link href="/css/dashboard.css" rel="stylesheet"/>
+
 
     <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
-    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
     <!--[if lt IE 9]>
       <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
       <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
     <![endif]-->
     
-    <style type="text/css">
-    	body {
-		  min-height: 2000px;
-		  padding-top: 70px;
-		}
-    </style>
     
+    <style>
+	    .media{
+		    border-bottom: 1px solid #eee;
+		    margin-bottom: 10px;
+		    padding-bottom: 12px;
+	    }
+	    .smallertext{
+		    font-size: smaller;
+	    }
+	    .approvedState{
+		    font-weight: bold;
+		    color:#65bb4c;
+	    }
+	    .commentfooter{
+		    padding-top: 4px;
+	    }
+	    
+	    .comments, .commentsbtn{
+	    	margin-bottom: 12px;
+	    	margin-top: 12px;
+	    }
+	    
+	    
+	    	    .media{
+		    border-bottom: 1px solid #eee;
+		    margin-bottom: 10px;
+		    padding-bottom: 12px;
+	    }
+	    .smallertext{
+		    font-size: smaller;
+	    }
+	    .APPROVEDState{
+		    font-weight: bold;
+		    color:#65bb4c;
+	    }
+	    .WAITINGState{
+		    font-weight: bold;
+		    color:#0066CC;
+	    }
+	    .REJECTEDState{
+		    font-weight: bold;
+		    color:#CC3333;
+	    }
+	    .commentfooter{
+		    padding-top: 4px;
+	    }
+    </style>
   </head>
-<body>
-	
-	    <!-- Fixed navbar -->
-    <nav class="navbar navbar-default navbar-fixed-top">
-      <div class="container">
+
+  <body>
+
+    <nav class="navbar navbar-inverse navbar-fixed-top">
+      <div class="container-fluid">
         <div class="navbar-header">
           <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
             <span class="sr-only">Toggle navigation</span>
@@ -37,22 +84,116 @@
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
           </button>
-          <a class="navbar-brand" href="#">WEM Admin UI</a>
+          <a class="navbar-brand" href="#">WEM Admin</a>
+          <p class="navbar-text" th:text="${userDisplayName}">Signed in as Mark Otto</p>
+        </div>
+        <div id="navbar" class="navbar-collapse collapse">
+          <ul class="nav navbar-nav navbar-right">
+            <li><a href="/admin/comments">Kommentare</a></li>
+            <li><a href="#">Blogs</a></li>
+            <li><a href="#">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</a></li>
+          </ul>
         </div>
       </div>
     </nav>
+
+    <div class="container-fluid">
+	      <div class="row">
+	        <div class="col-sm-3 col-md-2 sidebar">
+	        
+	        	
+	        	<div th:if="${userDisplayName != null}">
+			  		Hello: <span th:text="${userDisplayName}">27</span>
+				</div>
 	
-	
-	
-	<div class="container">
-		<div class="row">
+	        
+	        
 			
-		</div>
-	</div>
-    
-    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+				<!--  // sidebar navi -->
+		          
+		         
+		        <p>Kommentare</p>
+				<ul class="nav nav-sidebar">
+		            <li><a href="/admin/comments?state=waiting">Nicht ver&ouml;ffentlicht</a></li>
+		            <li><a href="/admin/comments?state=approved">Ver&ouml;ffentlicht</a></li>
+		            <li><a href="/admin/comments?state=rejected">Zur&uuml;ckgewiesen</a></li>
+					<li><a href="/admin/comments?state=all">Alle Kommentare</a></li>
+		          </ul>
+	        </div><!-- ."col-sm-3 col-md-2 sidebar" -->
+	        
+	        
+	        <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">	          
+	          	<div class="row">	  			
+	  				<div style=" padding-bottom: 20px;margin: 40px 0 20px;border-bottom: 1px solid #eee;">
+	  				
+			  			<div class="btn-group" role="group" aria-label="...">
+						  <a class="btn btn-default" href="/admin/comments?state=waiting">Nicht ver&ouml;ffentlicht</a>
+						  <a class="btn btn-default" href="/admin/comments?state=approved">Ver&ouml;ffentlicht</a>
+						  <a class="btn btn-default" href="/admin/comments?state=rejected">Zur&uuml;ckgewiesen</a>
+						  <a class="btn btn-default" href="/admin/comments?state=all">Alle Kommentare</a>
+						</div>
+					
+	  				</div>
+	  				  				  			
+	  				  				  			
+		  			<!-- //  Template -->
+		  			<div class="row">
+		  			
+				  		<div class="col-md-9" id="result">
+				  		
+				  			<!-- // Kommentare  -->				  			
+				  			<div class="media" th:each="comment : ${comments}">				  			
+								<div class="media-body">
+									<div class="media-heading smallertext">
+										<span th:class="${comment.state} + 'State'" th:text="${comment.state}"></span> | Erstellt am: 
+										 <span th:text="${comment.createddate}"></span> | Erstellt von: 
+										 <span th:text="${comment.createdby}"></span> | Rating: <span class="glyphicon glyphicon-star" th:each="n : ${#numbers.sequence(1, comment.rating )}"></span>
+									</div>
+									<span th:text="${comment.title}"></span>
+									<div class="commentfooter smallertext">Kommentar f&uumlr; <a href="#" th:text="${comment.product.title}"></a></div>
+								</div>
+								
+								<div class="media-right">
+									<a href="#">
+										<img class="media-object" data-src="4" alt="avatar" src="/avatar.jpeg" data-holder-rendered="true" style="width: 64px; height: 64px;"/>
+									</a>
+								</div>
+							</div><!-- .media -->		
+							
+				  			<!-- // BlogPost  -->				  			
+				  			<div class="media" th:each="blogpost : ${blogposts}">				  			
+								<div class="media-body">
+									<div class="media-heading smallertext">
+										<span th:class="${blogpost.state} + 'State'" th:text="${blogpost.state}"></span> | Erstellt am: 
+										 <span th:text="${blogpost.createddate}"></span> | Erstellt von: 
+										 <span th:text="${blogpost.createdby}"></span> | Rating: <span class="glyphicon glyphicon-star" th:each="n : ${#numbers.sequence(1, comment.rating )}"></span>
+									</div>
+									<span th:text="${blogpost.title}"></span>
+									<div class="commentfooter smallertext" th:text=${#strings.substring(blogpost.content,1,45)}></div>
+								</div>
+								
+								<div class="media-right">
+									<a href="#">
+										<img class="media-object" data-src="4" alt="avatar" src="/avatar.jpeg" data-holder-rendered="true" style="width: 64px; height: 64px;"/>
+									</a>
+								</div>
+							</div><!-- .media -->				  			
+				  			
+				  		</div><!-- #result -->				  						  		
+				  		
+			  		</div><!-- /.row -->  			  			
+	      		</div>
+	    	</div>
+	    </div>
+    </div>
+
+    <!-- Bootstrap core JavaScript
+    ================================================== -->
+    <!-- Placed at the end of the document so the pages load faster -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
-    <!-- Include all compiled plugins (below), or include individual files as needed -->
     <script src="/js/bootstrap.min.js"></script>
-</body>
+    <script src="/js/app.js"></script>
+    
+   
+  </body>
 </html>

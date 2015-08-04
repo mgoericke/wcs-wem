@@ -85,3 +85,50 @@ $(document).ready(function(){
     	
     	
     	
+    	
+        var links = $('.btn-group').find('a'); 
+        $(links).each(function(item){
+        	
+        	$(this).click(function(){
+            	var state = $(this).attr('href').substring(1, $(this).attr('href').length);
+                loadComments(state);
+                
+        	});
+        });
+        
+        function loadComments(state){
+        	var controller = '/comments/state/' + state;
+            $.ajax({
+            	url: controller
+            }).then(function(data){
+            	var comments = $('#comments');
+            	
+            	$(comments).empty();
+            	$.each(data, function(idx, comment){            		
+                	$(comments).append(getCommentMarkup(comment));
+            	});
+            	$(comments).fadeIn();
+            });
+        }
+        
+        function getCommentMarkup(comment){
+        	var markup = '<div class="media">';
+    		markup += '<div class="media-body">';
+    		markup += '<div class="media-heading smallertext"><span class="' +comment.state+ 'State">' +comment.state+ '</span> | Erstellt am: ' + comment.createddate + ' | Erstellt von: ' + comment.createdby + ' | Rating: ' + comment.rating + '</div>';
+    		markup += comment.title;
+    		markup += '<div class="commentfooter smallertext">Kommentar f&uumlr: <a href="#">' +comment.contentAsset.title+ '</a></div>';
+    		markup += '</div>';
+    		markup += '<div class="media-right">';
+    		markup += '<a href="#">';
+    		markup += '<img class="media-object" data-src="4" alt="avatar" src="/wem-community/static/img/avatar.jpeg" data-holder-rendered="true" style="width: 64px; height: 64px;">';
+    		markup += '</a>';
+    		markup += '</div>';
+    		markup += '</div>';	
+    		return markup;
+        }
+        
+        $(document).ready(function(){
+        	loadComments('all');
+        });
+    	
+    	

@@ -225,12 +225,12 @@ public class RESTService {
 	}
 	
 
-	public List<Comment> getComments(String productid) throws UnsupportedEncodingException, SSOException{
+	public List<Comment> getComments(String query) throws UnsupportedEncodingException, SSOException{
 
 		// name of all attributes included in result
         String fields = "name,description,content,cat,source,title,relid,reltype,state,createdby,updateddate,rating";
 		
-        List<AssetInfo> assetinfoList = search(wcs.getCsSiteName(), "FW_Comment", productid, fields, null, null, null, null).getAssetinfos();
+        List<AssetInfo> assetinfoList = search(wcs.getCsSiteName(), "FW_Comment", query, fields, null, null, null, null).getAssetinfos();
         List<Comment> assets = null;
         
         
