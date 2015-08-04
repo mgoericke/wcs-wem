@@ -19,6 +19,8 @@ das auf Port 9080 lauscht, konfiguriert. Ein Deployment in einen AppServer ist n
 * Admin UI
 	* Kommentare nach Status ein/ausblenden
 	* Status von Kommentaren Šndern
+	* BlogPosts nach Status ein/ausblenden
+	* Status von BlogPosts Šndern
 * App UI
 	* Anzeige von Produkten
 	* Anzeige von Kommentaren zu PRodukten

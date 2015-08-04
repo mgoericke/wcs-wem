@@ -47,7 +47,7 @@
 	    }
 	    
 	    
-	    	    .media{
+	    .media{
 		    border-bottom: 1px solid #eee;
 		    margin-bottom: 10px;
 		    padding-bottom: 12px;
@@ -70,6 +70,9 @@
 	    .commentfooter{
 		    padding-top: 4px;
 	    }
+	    .activesidebar{
+	    	background-color: #ddd;
+	    }
     </style>
   </head>
 
@@ -89,8 +92,8 @@
         </div>
         <div id="navbar" class="navbar-collapse collapse">
           <ul class="nav navbar-nav navbar-right">
-            <li><a href="/admin/comments">Kommentare</a></li>
-            <li><a href="#">Blogs</a></li>
+            <li th:class="${currentType == 'comments'}?'active':'d'"><a href="/admin/comments">Kommentare</a></li>
+            <li th:class="${currentType == 'blogposts'}?'active':'d'"><a href="/admin/blogposts">Blog Posts</a></li>
             <li><a href="#">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</a></li>
           </ul>
         </div>
@@ -100,24 +103,18 @@
     <div class="container-fluid">
 	      <div class="row">
 	        <div class="col-sm-3 col-md-2 sidebar">
-	        
-	        	
-	        	<div th:if="${userDisplayName != null}">
+	
+	        	<!--  // sidebar navi -->
+		    	<div th:if="${userDisplayName != null}">
 			  		Hello: <span th:text="${userDisplayName}">27</span>
 				</div>
-	
-	        
-	        
-			
-				<!--  // sidebar navi -->
-		          
-		         
-		        <p>Kommentare</p>
+	     
+		        <h4 th:text="${currentTypeDesc}">Kommentare</h4>
+		        
 				<ul class="nav nav-sidebar">
-		            <li><a href="/admin/comments?state=waiting">Nicht ver&ouml;ffentlicht</a></li>
-		            <li><a href="/admin/comments?state=approved">Ver&ouml;ffentlicht</a></li>
-		            <li><a href="/admin/comments?state=rejected">Zur&uuml;ckgewiesen</a></li>
-					<li><a href="/admin/comments?state=all">Alle Kommentare</a></li>
+		            <li th:class="${currentState == 'waiting'}?'active':'d'"><a th:href="'/admin/' + ${currentType} + '?state=waiting'">Nicht ver&ouml;ffentlicht</a></li>
+		            <li th:class="${currentState == 'approved'}?'active':'d'"><a th:href="'/admin/' + ${currentType} + '?state=approved'">Ver&ouml;ffentlicht</a></li>
+		            <li th:class="${currentState == 'rejected'}?'active':'d'"><a th:href="'/admin/' + ${currentType} + '?state=rejected'">Zur&uuml;ckgewiesen</a></li>
 		          </ul>
 	        </div><!-- ."col-sm-3 col-md-2 sidebar" -->
 	        
@@ -126,11 +123,10 @@
 	          	<div class="row">	  			
 	  				<div style=" padding-bottom: 20px;margin: 40px 0 20px;border-bottom: 1px solid #eee;">
 	  				
-			  			<div class="btn-group" role="group" aria-label="...">
-						  <a class="btn btn-default" href="/admin/comments?state=waiting">Nicht ver&ouml;ffentlicht</a>
-						  <a class="btn btn-default" href="/admin/comments?state=approved">Ver&ouml;ffentlicht</a>
-						  <a class="btn btn-default" href="/admin/comments?state=rejected">Zur&uuml;ckgewiesen</a>
-						  <a class="btn btn-default" href="/admin/comments?state=all">Alle Kommentare</a>
+			  			<div class="btn-group" role="group">
+						  <a th:class="${currentState == 'waiting'}?'btn btn-default active':'btn btn-default'" th:href="'/admin/' + ${currentType} + '?state=waiting'">Nicht ver&ouml;ffentlicht</a>
+						  <a th:class="${currentState == 'approved'}?'btn btn-default active':'btn btn-default'" th:href="'/admin/' + ${currentType} + '?state=approved'">Ver&ouml;ffentlicht</a>
+						  <a th:class="${currentState == 'rejected'}?'btn btn-default active':'btn btn-default'" th:href="'/admin/' + ${currentType} + '?state=rejected'">Zur&uuml;ckgewiesen</a>
 						</div>
 					
 	  				</div>
@@ -155,7 +151,7 @@
 								
 								<div class="media-right">
 									<a href="#">
-										<img class="media-object" data-src="4" alt="avatar" src="/avatar.jpeg" data-holder-rendered="true" style="width: 64px; height: 64px;"/>
+										<img class="media-object" data-src="4" alt="avatar" src="http://javamark.de/cool.png" data-holder-rendered="true" style="width: 64px; height: 64px;"/>
 									</a>
 								</div>
 							</div><!-- .media -->		
@@ -166,15 +162,15 @@
 									<div class="media-heading smallertext">
 										<span th:class="${blogpost.state} + 'State'" th:text="${blogpost.state}"></span> | Erstellt am: 
 										 <span th:text="${blogpost.createddate}"></span> | Erstellt von: 
-										 <span th:text="${blogpost.createdby}"></span> | Rating: <span class="glyphicon glyphicon-star" th:each="n : ${#numbers.sequence(1, comment.rating )}"></span>
+										 <span th:text="${blogpost.createdby}"></span>
 									</div>
 									<span th:text="${blogpost.title}"></span>
-									<div class="commentfooter smallertext" th:text=${#strings.substring(blogpost.content,1,45)}></div>
+									<div class="commentfooter smallertext" th:text="${#strings.substring(blogpost.content,1,300)} + ' ...'"></div>
 								</div>
 								
 								<div class="media-right">
 									<a href="#">
-										<img class="media-object" data-src="4" alt="avatar" src="/avatar.jpeg" data-holder-rendered="true" style="width: 64px; height: 64px;"/>
+										<img class="media-object" data-src="4" alt="avatar" src="http://javamark.de/cool.png" data-holder-rendered="true" style="width: 64px; height: 64px;"/>
 									</a>
 								</div>
 							</div><!-- .media -->				  			

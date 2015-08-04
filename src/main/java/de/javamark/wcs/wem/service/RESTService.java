@@ -32,6 +32,7 @@ import com.sun.jersey.api.client.WebResource;
 import com.sun.jersey.api.client.WebResource.Builder;
 
 import de.javamark.wcs.wem.WemConfig;
+import de.javamark.wcs.wem.model.BlogPost;
 import de.javamark.wcs.wem.model.Comment;
 import de.javamark.wcs.wem.model.Product;
 import de.javamark.wcs.wem.utils.Mapper;
@@ -254,6 +255,41 @@ public class RESTService {
 	        	a.setRating(Mapper.getField("rating",info.getFieldinfos()) );		        	
 	        	a.setRelid(relid);
 	        	a.setReltype(reltype);
+
+	        	a.setCreatedby(Mapper.getField("createdby",info.getFieldinfos()) );
+	        	a.setCreateddate(Mapper.getField("updateddate",info.getFieldinfos()) );
+
+
+	        	assets.add(a);
+	        }
+        }
+        
+        return assets;
+		
+	}
+	
+	public List<BlogPost> getBlogPosts(String query) throws UnsupportedEncodingException, SSOException{
+
+		// name of all attributes included in result
+        String fields = "name,description,content,cat,source,title,state,createdby,updateddate";
+		
+        List<AssetInfo> assetinfoList = search(wcs.getCsSiteName(), "FW_BlogPost", query, fields, null, null, "updateddate", "desc").getAssetinfos();
+        List<BlogPost> assets = null;
+        
+        
+        if(assetinfoList!= null && assetinfoList.size()>0){
+        	assets = new ArrayList<BlogPost>();
+	        for(AssetInfo info : assetinfoList){
+	        	
+	        		
+
+	        	BlogPost a = new BlogPost();
+	        	a.setId(info.getId().split(":")[1]);
+	        	a.setDescription(Mapper.getField("description",info.getFieldinfos()) );
+	        	a.setName(Mapper.getField("name",info.getFieldinfos()) );
+	        	a.setTitle(Mapper.getField("title",info.getFieldinfos()) );
+	        	a.setContent(Mapper.getField("content",info.getFieldinfos()) );
+	        	a.setState(Mapper.getField("state",info.getFieldinfos()) );
 
 	        	a.setCreatedby(Mapper.getField("createdby",info.getFieldinfos()) );
 	        	a.setCreateddate(Mapper.getField("updateddate",info.getFieldinfos()) );

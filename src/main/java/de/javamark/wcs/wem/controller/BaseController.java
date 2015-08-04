@@ -15,6 +15,7 @@ import com.fatwire.rest.beans.AssetTypeBean;
 import com.fatwire.wem.sso.SSOException;
 
 import de.javamark.wcs.wem.WemConfig;
+import de.javamark.wcs.wem.model.BlogPost;
 import de.javamark.wcs.wem.model.Comment;
 import de.javamark.wcs.wem.service.InstallApplicationService;
 import de.javamark.wcs.wem.service.InstallBlogPostAssetTypeService;
@@ -51,6 +52,10 @@ public class BaseController {
 	@RequestMapping(value="/admin")
 	public String admin(Model model){		
 		model.addAttribute("config", wcs);
+
+		model.addAttribute("currentType", "comments");
+		model.addAttribute("currentTypeDesc", "Kommentare");
+		
 		return "admin/index";
 	}
 	@RequestMapping(value="/admin/comments")
@@ -81,16 +86,43 @@ public class BaseController {
 		} catch (SSOException e) {
 			model.addAttribute("error", e);
 		}
+
+		model.addAttribute("currentState", state);
+		model.addAttribute("currentType", "comments");
+		model.addAttribute("currentTypeDesc", "Kommentare");
 		
 		return "admin/index";
 	}	
 	
 	@RequestMapping(value="/admin/blogposts")
-	public String adminBlogPosts(@RequestParam(value="state", required=false, defaultValue="wating") String state,Model model){		
+	public String adminBlogPosts(@RequestParam(value="state", required=false, defaultValue="waiting") String state,Model model){		
+
+		if(state.equalsIgnoreCase("all")){
+			state = null;
+		}
+				
 		model.addAttribute("config", wcs);
 		
 		// lade blogposts
-		
+		try {
+			List<BlogPost> blogposts = restService.getBlogPosts(state);
+			
+			if(blogposts != null){
+				
+				
+				model.addAttribute("blogposts", blogposts);
+			}else{
+				System.out.println("hmmm ... no blogposts found");
+			}
+		} catch (UnsupportedEncodingException e) {
+			model.addAttribute("error", e);
+		} catch (SSOException e) {
+			model.addAttribute("error", e);
+		}
+
+		model.addAttribute("currentState", state);
+		model.addAttribute("currentType", "blogposts");
+		model.addAttribute("currentTypeDesc", "Blog Posts");
 		
 		return "admin/index";
 	}
