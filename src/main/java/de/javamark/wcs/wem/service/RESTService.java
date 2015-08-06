@@ -51,6 +51,19 @@ public class RESTService {
 	
 	String multiTicket;
 
+	
+	public AssetBean update(AssetBean asset, String assetTypeName) throws SSOException{
+		 Client client = Client.create();
+	        String url = wcs.getRestUrl() + "/sites/" + wcs.getCsSiteName() + "/types/"+assetTypeName+"/assets/0";
+	        WebResource res = client.resource(url);
+	        String ticket = SSO.getSSOSession().getTicket(url, wcs.getCsUsername(), wcs.getCsPassword());
+	        res = res.queryParam("ticket", SSO.getSSOSession().getTicket(url, wcs.getCsUsername(), wcs.getCsPassword()));
+	        Builder bld = res.accept(MediaType.APPLICATION_XML);
+	        bld = bld.header("Pragma", "auth-redirect=false");
+	        //Add the CSRF header
+	        bld = bld.header("X-CSRF-Token", ticket);
+	        return bld.put(AssetBean.class, asset);
+	}
 	/**
 	 * 
 	 * @param sites			wcs sites
@@ -166,7 +179,7 @@ public class RESTService {
 		Builder builder = webResource.accept(MediaType.APPLICATION_JSON);
         builder = builder.header("X-CSRF-Token", this.multiTicket);
 		
-        log.debug(webResource.getURI());
+        System.out.println(webResource.getURI());
 		// result
         AssetTypeBean assetTypeBean = builder.get(AssetTypeBean.class); 
         
@@ -191,7 +204,7 @@ public class RESTService {
 		Builder builder = webResource.accept(MediaType.APPLICATION_JSON);
         builder = builder.header("X-CSRF-Token", this.multiTicket);
 		
-        log.debug(webResource.getURI());
+        System.out.println(webResource.getURI());
 		// result
         SitesBean sitesBean = builder.get(SitesBean.class); 
         return sitesBean;
@@ -264,8 +277,44 @@ public class RESTService {
 	        }
         }
         
-        return assets;
+        return assets;		
+	}
+	public Comment getComment(String commentid) throws SSOException{
+		AssetBean aBean = read("FW_Comment", commentid);
+		if(aBean != null){
+			List<Attribute> attrs = aBean.getAttributes();
+			
+			Comment comment = new Comment();
+			comment.setCreatedby(aBean.getCreatedby());
+			comment.setCreateddate(aBean.getUpdateddate().toString());
+			comment.setName(aBean.getName());
+			comment.setId(aBean.getId().split(":")[1]);
+			
+			for(Attribute attr : attrs){
+				if(attr.getName().equalsIgnoreCase("title")){
+					comment.setTitle(attr.getData().getStringValue());
+				}
+				if(attr.getName().equalsIgnoreCase("rating")){
+					comment.setRating(attr.getData().getStringValue());
+				}
+				if(attr.getName().equalsIgnoreCase("description")){
+					comment.setDescription(attr.getData().getStringValue());
+				}
+				if(attr.getName().equalsIgnoreCase("updateddate")){
+					comment.setCreateddate(attr.getData().getStringValue());
+				}
+				if(attr.getName().equalsIgnoreCase("state")){
+					comment.setState(attr.getData().getStringValue());
+				}
+				if(attr.getName().equalsIgnoreCase("content")){
+					comment.setContent(attr.getData().getStringValue());
+				}
+			}
+			
+			return comment;
+		}
 		
+		return null;
 	}
 	
 	public List<BlogPost> getBlogPosts(String query) throws UnsupportedEncodingException, SSOException{
