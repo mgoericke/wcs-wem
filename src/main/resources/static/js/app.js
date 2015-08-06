@@ -11,6 +11,15 @@ function log(msg){
 
 $(document).ready(function(){
 
+	
+	var stateLinks = $('.media').find('a'); 
+	$(stateLinks).each(function(){
+		$(this).click(function(){
+			log('clicked');
+		});
+	});
+	
+	
 			// Embed the frame pointing to the protected page,
 			// this way the login form will be displayed in this frame.
 			var url = "user/welcome";
@@ -134,3 +143,4 @@ $(document).ready(function(){
         });
     	
     	
+        

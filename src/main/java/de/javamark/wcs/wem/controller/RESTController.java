@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.fatwire.rest.beans.AssetBean;
 import com.fatwire.rest.beans.Attribute;
+import com.fatwire.rest.beans.Attribute.Data;
 import com.fatwire.wem.sso.SSOException;
 
 import de.javamark.wcs.wem.model.BlogPost;
@@ -29,7 +30,7 @@ public class RESTController {
 	Logger log = Logger.getLogger("de.javamark.wcs.wem.controller");
 	
 	@Autowired
-	RESTService assetService;
+	RESTService restService;
 	
 	
 
@@ -47,7 +48,7 @@ public class RESTController {
 			method=RequestMethod.GET,
 			produces="application/json")
 	public String sites(@RequestParam(value="sites", required=false) String sites) throws SSOException, JsonGenerationException, JsonMappingException, IOException{		
-		return Mapper.toJSON(assetService.getSites());		
+		return Mapper.toJSON(restService.getSites());		
 	}
 	
 	
@@ -65,7 +66,7 @@ public class RESTController {
 			method=RequestMethod.GET,
 			produces="application/json")
 	public String enabledTypes(@RequestParam(value="sites", required=false) String sites) throws SSOException, JsonGenerationException, JsonMappingException, IOException{		
-		return Mapper.toJSON(assetService.enabledTypes(sites));		
+		return Mapper.toJSON(restService.enabledTypes(sites));		
 		
 	}
 	
@@ -83,7 +84,7 @@ public class RESTController {
 			method=RequestMethod.GET,
 			produces="application/json")
 	public String types(@PathVariable(value="assettype") String assettype) throws SSOException, JsonGenerationException, JsonMappingException, IOException{		
-		return Mapper.toJSON(assetService.getType(assettype));		
+		return Mapper.toJSON(restService.getType(assettype));		
 		
 	}
 	
@@ -109,21 +110,67 @@ public class RESTController {
 			@RequestParam(value="sortField", required=false) String sortField,
 			@RequestParam(value="sortDirection", required=false) String sortDirection) throws SSOException, JsonGenerationException, JsonMappingException, IOException{
 		
-		return Mapper.toJSON(assetService.search(sites, assettype, query, fields, startIndex, count, sortField, sortDirection));		
+		return Mapper.toJSON(restService.search(sites, assettype, query, fields, startIndex, count, sortField, sortDirection));		
 	}
 
 	@RequestMapping(value="/comments",
 			method=RequestMethod.GET,
 			produces="application/json")
 	public @ResponseBody List<Comment> comments() throws UnsupportedEncodingException, SSOException{
-		return assetService.getComments(null);
+		return restService.getComments(null);
 	}
 	@RequestMapping(value="/blogposts",
 			method=RequestMethod.GET,
 			produces="application/json")
 	public @ResponseBody List<BlogPost> blogposts() throws UnsupportedEncodingException, SSOException{
-		return assetService.getBlogPosts(null);
+		return restService.getBlogPosts(null);
 	}
+	@RequestMapping(value="/comments/{commentid}/state/{state}",
+			method=RequestMethod.POST)
+	public @ResponseBody Comment commentsstate(@PathVariable(value="commentid") String commentid, @PathVariable(value="state") String state) throws UnsupportedEncodingException, SSOException{
+		
+		// lade comment
+		AssetBean asset = restService.read("FW_Comment", commentid);
+		List<Attribute> attrs = asset.getAttributes();
+		for(Attribute attr : attrs){
+			// setze state
+			if(attr.getName().equalsIgnoreCase("state")){
+				Data data = new Data();
+				data.setStringValue(state);
+				attr.setData(data);
+			}
+		}		
+		restService.update(asset, "FW_Comment");			
+		return restService.getComment(commentid);
+		
+	}		@RequestMapping(value="/blogposts/{blogpostid}/state/{state}",
+			method=RequestMethod.POST)
+	public @ResponseBody BlogPost blogpoststate(@PathVariable(value="blogpostid") String blogpostid, @PathVariable(value="state") String state) throws UnsupportedEncodingException, SSOException{
+		
+		// lade comment
+		AssetBean asset = restService.read("FW_BlogPost", blogpostid);
+		List<Attribute> attrs = asset.getAttributes();
+		for(Attribute attr : attrs){
+			// setze state
+			if(attr.getName().equalsIgnoreCase("state")){
+				Data data = new Data();
+				data.setStringValue(state);
+				attr.setData(data);
+			}
+		}		
+		restService.update(asset, "FW_BlogPost");			
+		return restService.getBlogPosts(blogpostid).get(0);
+		
+	}	
+	
+	
+	@RequestMapping(value="/comments/{commentid}",
+			method=RequestMethod.GET)
+	public @ResponseBody Comment getcomment(@PathVariable(value="commentid") String commentid) throws UnsupportedEncodingException, SSOException{		
+		// lade comment
+		return restService.getComment(commentid);
+	}
+	
 	
 	
 }

@@ -63,6 +63,7 @@ public class PubController {
 			SSOPrincipal user = SSO.getSSOSession().getAssertion().getPrincipal();
 			
 			
+			
 			model.addAttribute("userDisplayName", user.getDisplayName());
 		}
 		}catch(SSOException e){

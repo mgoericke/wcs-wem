@@ -56,16 +56,16 @@
 		    font-size: smaller;
 	    }
 	    .APPROVEDState{
-		    font-weight: bold;
 		    color:#65bb4c;
 	    }
 	    .WAITINGState{
-		    font-weight: bold;
 		    color:#0066CC;
 	    }
 	    .REJECTEDState{
-		    font-weight: bold;
 		    color:#CC3333;
+	    }
+	    .statebold{
+		    font-weight: bold;
 	    }
 	    .commentfooter{
 		    padding-top: 4px;
@@ -130,7 +130,7 @@
 						</div>
 					
 	  				</div>
-	  				  				  			
+	  				
 	  				  				  			
 		  			<!-- //  Template -->
 		  			<div class="row">
@@ -139,9 +139,41 @@
 				  		
 				  			<!-- // Kommentare  -->				  			
 				  			<div class="media" th:each="comment : ${comments}">				  			
-								<div class="media-body">
+								<div class="media-body" >
 									<div class="media-heading smallertext">
-										<span th:class="${comment.state} + 'State'" th:text="${comment.state}"></span> | Erstellt am: 
+									
+									<div class="btn-group" th:if="${comment.state == 'APPROVED'}">									
+									  	<button type="button" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+									    	Freigegeben <span class="caret"></span>
+									  	</button>
+									  	<ul class="dropdown-menu">
+									    	<li><a href="#"  th:attr="data-id='FW_Comment:' + ${comment.id}+':WAITING'">Freigabe zurücknehmen</a></li>
+									  	</ul>
+									</div>
+									
+									<div class="btn-group" th:if="${comment.state == 'WAITING'}">
+									  	<button type="button" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+									    	Nicht Freigegeben <span class="caret"></span>
+									  	</button>
+									  	<ul class="dropdown-menu">
+									    	<li><a href="#" th:attr="data-id='FW_Comment:' + ${comment.id}+':APPROVED'">Freigabe erteilen</a></li>
+									    	<li><a href="#"  th:attr="data-id='FW_Comment:' + ${comment.id}+':REJECTED'">Zurückweisen</a></li>
+									  	</ul>
+									</div>
+									
+									<div class="btn-group" th:if="${comment.state == 'REJECTED'}">									
+									  	<button type="button" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+									    	Zurück gewiesen <span class="caret"></span>
+									  	</button>
+									  	<ul class="dropdown-menu">
+									    	<li><a href="#" th:attr="data-id='FW_Comment:' + ${comment.id}+':APPROVED'">Freigabe erteilen</a></li>
+									  	</ul>
+									</div>
+									<br/>
+									<br/>
+									
+										
+										 Erstellt am: 
 										 <span th:text="${comment.createddate}"></span> | Erstellt von: 
 										 <span th:text="${comment.createdby}"></span> | Rating: <span class="glyphicon glyphicon-star" th:each="n : ${#numbers.sequence(1, comment.rating )}"></span>
 									</div>
@@ -160,7 +192,57 @@
 				  			<div class="media" th:each="blogpost : ${blogposts}">				  			
 								<div class="media-body">
 									<div class="media-heading smallertext">
-										<span th:class="${blogpost.state} + 'State'" th:text="${blogpost.state}"></span> | Erstellt am: 
+									
+									<div class="btn-group" th:if="${blogpost.state == 'APPROVED'}">									
+									  	<button type="button" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+									    	Freigegeben <span class="caret"></span>
+									  	</button>
+									  	<ul class="dropdown-menu">
+									    	<li><a href="#"  th:attr="data-id='FW_BlogPost:' + ${blogpost.id}+':WAITING'">Freigabe zurücknehmen</a></li>
+									  	</ul>
+									</div>
+									
+									<div class="btn-group" th:if="${blogpost.state == 'WAITING'}">
+									  	<button type="button" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+									    	Nicht Freigegeben <span class="caret"></span>
+									  	</button>
+									  	<ul class="dropdown-menu">
+									    	<li><a href="#" th:attr="data-id='FW_BlogPost:' + ${blogpost.id}+':APPROVED'">Freigabe erteilen</a></li>
+									    	<li><a href="#"  th:attr="data-id='FW_BlogPost:' + ${blogpost.id}+':REJECTED'">Zurückweisen</a></li>
+									  	</ul>
+									</div>
+									
+									<div class="btn-group" th:if="${blogpost.state == 'REJECTED'}">									
+									  	<button type="button" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+									    	Zurück gewiesen <span class="caret"></span>
+									  	</button>
+									  	<ul class="dropdown-menu">
+									    	<li><a href="#" th:attr="data-id='FW_BlogPost:' + ${blogpost.id}+':APPROVED'">Freigabe erteilen</a></li>
+									  	</ul>
+									</div>
+									<br/>
+									<br/>
+									
+									
+										<!-- 
+										<div th:if="${blogpost.state == 'APPROVED'}">
+											<span class="APPROVEDState statebold">APPROVED</span> | 
+											<a th:id="${blogpost.state}">UNAPPROVE</a> | 
+											<a th:id="${blogpost.state}">REJECT</a>
+										</div>
+										<div th:if="${blogpost.state == 'WAITING'}">
+											<a th:id="${blogpost.state}">APPROVE</a> | 
+											<span class="WAITINGState statebold">UNAPPROVED</span> | 
+											<a th:id="${blogpost.state}">REJECT</a>
+										</div>
+										<div th:if="${blogpost.state == 'REJECTED'}">
+											<a th:id="${blogpost.state}">UNAPPROVE</a> | 
+											<a th:id="${blogpost.state}">REJECT</a> | 
+											<span class="REJECTEDState statebold">REJECTED</span>
+										</div>
+										-->
+										
+										 Erstellt am: 
 										 <span th:text="${blogpost.createddate}"></span> | Erstellt von: 
 										 <span th:text="${blogpost.createdby}"></span>
 									</div>
@@ -188,8 +270,7 @@
     <!-- Placed at the end of the document so the pages load faster -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
     <script src="/js/bootstrap.min.js"></script>
-    <script src="/js/app.js"></script>
-    
+    <script src="/js/adm.js"></script>
    
   </body>
 </html>
